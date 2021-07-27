@@ -5,5 +5,6 @@ module.exports = class Pacman extends Entity {
     super(options);
     this.pathable = true;
     this.speed = options.speed || 1;
+    this.entID = 'player_pacman';
   }
 }

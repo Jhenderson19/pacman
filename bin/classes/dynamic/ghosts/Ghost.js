@@ -7,5 +7,6 @@ module.exports = class Ghost extends Entity {
     this.speed = options.speed || 1;
     this.colors = '1E1E1E';
     this.direction = 'east';
+    this.entID = 'ghost_default';
   }
 }
