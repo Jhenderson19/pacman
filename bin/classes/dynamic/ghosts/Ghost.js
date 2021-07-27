@@ -8,5 +8,6 @@ module.exports = class Ghost extends Entity {
     this.colors = '1E1E1E';
     this.direction = 'east';
     this.entID = 'ghost_default';
+    this.offsetx = -100;
   }
 }
