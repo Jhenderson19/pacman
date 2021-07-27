@@ -3,7 +3,11 @@ const Pellet = require('../classes/dynamic/items/Pellet');
 const PowerPellet = require('../classes/dynamic/items/PowerPellet');
 const Pacman = require('../classes/dynamic/players/Pacman');
 const Ghost = require('../classes/dynamic/ghosts/Ghost');
-const Warp = require('../classes/static/Warp');
+const Inky = require('../classes/dynamic/ghosts/Inky');
+const Pinky = require('../classes/dynamic/ghosts/Pinky');
+const Blinky = require('../classes/dynamic/ghosts/Blinky');
+const Clyde = require('../classes/dynamic/ghosts/Clyde');
+
 const GhostGate = require('../classes/static/GhostGate');
 const spawn = require('./spawner');
 const Cell = require('./Cell');
@@ -11,6 +15,8 @@ const Cell = require('./Cell');
 class Board {
   constructor() {
     this.board = [[]];
+    this.player;
+    this.ghosts = [];
     //w = wall
     //. = pellet
     //o = power pellet
@@ -20,7 +26,6 @@ class Board {
     //i = Inky
     //p = Pinky
     //c = clyde
-    //T = warp
     //- = ghostGate
     this.layout = `wwwwwwwwwwwwwwwwwwwwwwwwwwww
       w............ww............w
@@ -36,7 +41,7 @@ class Board {
       _____w.ww_____b____ww.w_____
       _____w.ww_www--www_ww.w_____
       wwwwww.ww_w______w_ww.wwwwww
-      T_____.___w_i_p_cw___._____T
+      ______.___w_i_p_cw___.______
       wwwwww.ww_w______w_ww.wwwwww
       _____w.ww_wwwwwwww_ww.w_____
       _____W.ww__________ww.w_____
@@ -56,14 +61,16 @@ class Board {
     this.layoutArr = this.layout.split('\n');
 
     this.board = this.layoutArr.map((row) => {
-      console.log(row);
       return row.split('').map((col) => {
         return new Cell();
       })
     });
+    this.height = this.board.length;
+    this.width = this.board[0].length;
 
     for(let y = 0; y < this.board.length; y++) {
       for(let x = 0; x < this.board[0].length; x++) {
+        let g = '';
         switch (this.layoutArr[y][x]){
           case 'w':
             this.board[y][x].insert(spawn(Wall, {x, y}));
@@ -73,12 +80,61 @@ class Board {
             break;
           case 'o':
             this.board[y][x].insert(spawn(PowerPellet, {x, y}));
+            break;
+          case '-':
+            this.board[y][x].insert(spawn(GhostGate, {x, y}));
+            break;
+          case 'P':
+            this.player = spawn(Pacman, {x, y});
+            this.board[y][x].insert(this.player);
+            break;
+          case 'i':
+            g = spawn(Inky, {x, y});
+            this.ghosts.push(g);
+            this.board[y][x].insert(g);
+            break;
+          case 'p':
+            g = spawn(Pinky, {x, y});
+            this.ghosts.push(g);
+            this.board[y][x].insert(g);
+            break;
+          case 'b':
+            g = spawn(Blinky, {x, y});
+            this.ghosts.push(g);
+            this.board[y][x].insert(g);
+            break;
+          case 'c':
+            g = spawn(Clyde, {x, y});
+            this.ghosts.push(g);
+            this.board[y][x].insert(g);
+            break;
         }
       }
     }
   }
+
+  consoleDraw() {
+    for (let i = 0; i < this.height; i++) {
+      var rowstr = ''
+      for (let j = 0; j < this.width; j++) {
+        this.board[i][j].contains('static_wall') ? rowstr += '%%' :
+        this.board[i][j].contains('static_ghostgate') ? rowstr += '--' :
+        this.board[i][j].contains('item_pellet') ? rowstr += ' º' :
+        this.board[i][j].contains('item_powerpellet') ? rowstr += ' ⁕' :
+        this.board[i][j].contains('player_pacman') ? rowstr += '😏' :
+        this.board[i][j].contains(/ghost/) ? rowstr += '👻' :
+          rowstr += '  ';
+      }
+      console.log(rowstr);
+    }
+    console.log();
+    console.log('player: ');
+    console.log(this.player);
+    console.log('ghosts:');
+    console.log(this.ghosts);
+  }
 }
 
-new Board();
+new Board().consoleDraw();
 
 module.exports = Board;

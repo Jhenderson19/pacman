@@ -3,7 +3,7 @@ class Ticker {
     this.entList = [];
     this.frame = 0;
   }
-  tick() {
+  tick(board) {
     this.entList.forEach((entity) => {
       entity.tick ?
         entity.tick(this.frame) : null;

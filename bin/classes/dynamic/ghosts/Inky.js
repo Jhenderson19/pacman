@@ -4,6 +4,7 @@ module.exports = class Inky extends Ghost{
   constructor(options) {
     super(options);
     this.colors = '00FFFFF';
+    this.direction = 'down';
     this.entID = 'ghost_inky';
   }
 }
