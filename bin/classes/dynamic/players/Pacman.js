@@ -7,5 +7,6 @@ module.exports = class Pacman extends Entity {
     this.speed = options.speed || 1;
     this.entID = 'player_pacman';
     this.offsetx = -100;
+    this.direction = 'none'
   }
 }
