@@ -1,3 +1,4 @@
+const ocanvas = require('ocanvas');
 const Entity = require('../entity');
 
 module.exports = class Wall extends Entity {
@@ -5,5 +6,8 @@ module.exports = class Wall extends Entity {
     super(options);
     this.pathable = false;
     this.entID = 'static_wall';
+  }
+  draw() {
+    console.log('wall');
   }
 }

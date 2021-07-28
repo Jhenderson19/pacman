@@ -1,3 +1,4 @@
+const ticker = require('./ticker');
 
 var spawner = function(spawnTarget, options) {
   var id = 0;
@@ -7,6 +8,7 @@ var spawner = function(spawnTarget, options) {
       throw `Object with ID ${id} spawned without entID! ${spawnTarget}`;
     }
     id++;
+    ticker.register(x);
     return x;
   }
 }
