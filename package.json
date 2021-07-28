@@ -4,11 +4,15 @@
   "description": "a pacman clone",
   "main": "index.js",
   "scripts": {
+    "dev": "webpack --mode development --watch",
+    "devrun": "live-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ocanvas": "^2.10.0"
+    "ocanvas": "^2.10.0",
+    "webpack": "^5.47.0",
+    "webpack-cli": "^4.7.2"
   }
 }

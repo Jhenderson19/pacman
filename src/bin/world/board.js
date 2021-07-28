@@ -1,3 +1,4 @@
+//Entities
 const Wall = require('../classes/static/Wall');
 const Pellet = require('../classes/dynamic/items/Pellet');
 const PowerPellet = require('../classes/dynamic/items/PowerPellet');
@@ -7,8 +8,9 @@ const Inky = require('../classes/dynamic/ghosts/Inky');
 const Pinky = require('../classes/dynamic/ghosts/Pinky');
 const Blinky = require('../classes/dynamic/ghosts/Blinky');
 const Clyde = require('../classes/dynamic/ghosts/Clyde');
-
 const GhostGate = require('../classes/static/GhostGate');
+
+//World
 const spawn = require('./spawner');
 const Cell = require('./Cell');
 
@@ -144,8 +146,5 @@ class Board {
     }
   }
 }
-
-var b = new Board();
-b.consoleDraw();
 
 module.exports = Board;

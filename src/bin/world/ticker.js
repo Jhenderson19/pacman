@@ -16,3 +16,5 @@ class Ticker {
     this.frame++;
   }
 }
+
+module.exports = Ticker;
