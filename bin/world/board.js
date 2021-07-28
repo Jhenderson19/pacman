@@ -44,7 +44,7 @@ class Board {
       ______.___w_i_p_cw___.______
       wwwwww.ww_w______w_ww.wwwwww
       _____w.ww_wwwwwwww_ww.w_____
-      _____W.ww__________ww.w_____
+      _____w.ww__________ww.w_____
       _____w.ww_wwwwwwww_ww.w_____
       wwwwww.ww_wwwwwwww_ww.wwwwww
       w............ww............w
@@ -58,6 +58,9 @@ class Board {
       w.wwwwwwwwww.ww.wwwwwwwwww.w
       w..........................w
       wwwwwwwwwwwwwwwwwwwwwwwwwwww`.replace(/ /g, '');
+    if(!/^[w\.o_Pipbc\n-]+$/.test(this.layout)) {
+      throw 'INVALID CHARACTER IN BOARD LAYOUT STRING'
+    }
     this.layoutArr = this.layout.split('\n');
 
     this.board = this.layoutArr.map((row) => {
@@ -133,8 +136,16 @@ class Board {
     console.log('ghosts:');
     console.log(this.ghosts);
   }
+  entListVerbose() {
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        console.log(this.board[i][j].listTypes());
+      }
+    }
+  }
 }
 
-new Board().consoleDraw();
+var b = new Board();
+b.consoleDraw();
 
 module.exports = Board;

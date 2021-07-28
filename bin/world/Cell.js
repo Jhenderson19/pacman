@@ -18,7 +18,7 @@ class Cell {
     return false;
   }
   contains(entID) {
-    this.results = [];
+    var results = [];
     for (let i in this.contents) {
       if(typeof entID === 'string') {
         if(this.contents[i].entID === entID) {
@@ -26,17 +26,24 @@ class Cell {
         }
       } else if (entID instanceof RegExp) {
         if(entID.test(this.contents[i].entID)) {
-          this.results.push(this.contents[i]);
+          results.push(this.contents[i]);
         }
       }
     }
     if(entID instanceof RegExp){
-      if(this.results.length === 0) {
+      if(results.length === 0) {
         return false;
       }
-      return this.results;
+      return results;
     }
     return false;
+  }
+  listTypes() {
+    var results = [];
+    for(let i in this.contents){
+      results.push(this.contents[i].entID);
+    }
+    return results;
   }
 }
 

@@ -6,4 +6,7 @@ module.exports = class Pellet extends Entity {
     this.pathable = true;
     this.entID = 'item_pellet';
   }
+  collect() {
+    console.log('pellet collected!');
+  }
 }

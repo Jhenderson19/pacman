@@ -5,4 +5,7 @@ module.exports = class PowerPellet extends Pellet {
     super(options);
     this.entID = 'item_powerpellet';
   }
+  collect() {
+    console.log('POWERPELLET COLLECTED! GET EM BOYS');
+  }
 }
