@@ -2,7 +2,7 @@ class Ticker {
   constructor() {
     this.entList = [];
     this.frame = 0;
-    this.tickInterval = Math.floor(1000/16);
+    this.tickInterval = Math.floor(1000 / 16);
     this.intervalDigit = 0;
     this.ticking = false;
   }
@@ -14,24 +14,27 @@ class Ticker {
   }
   tick() {
     this.entList.forEach((entity) => {
-      entity.tick ?
-        entity.tick(this.frame) : null;
-      entity.draw ?
-        entity.draw(this.frame) : null;
       entity.collide ?
         entity.collide(this.frame) : null;
-    })
-
+    });
+    this.entList.forEach((entity) => {
+      entity.tick ?
+        entity.tick(this.frame) : null;
+    });
+    this.entList.forEach((entity) => {
+      entity.draw ?
+        entity.draw(this.frame) : null;
+    });
     this.frame++;
   }
   startTick() {
-    if(!this.ticking) {
+    if (!this.ticking) {
       this.intervalDigit = setInterval(this.tick.bind(this), this.tickInterval);
       this.ticking = true;
     }
   }
   stopTick() {
-    if(this.ticking) {
+    if (this.ticking) {
       clearInterval(this.intervalDigit);
       this.ticking = false;
     }
