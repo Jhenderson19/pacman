@@ -8,6 +8,6 @@ module.exports = class Wall extends Entity {
     this.entID = 'static_wall';
   }
   draw() {
-    console.log('wall');
+
   }
 }

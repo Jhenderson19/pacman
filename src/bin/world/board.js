@@ -145,6 +145,9 @@ class Board {
       }
     }
   }
+  getCell(x, y) {
+    return this.board[y][x];
+  }
 }
 
 module.exports = Board;

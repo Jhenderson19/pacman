@@ -7,23 +7,30 @@ class Ticker {
     this.ticking = false;
   }
   register(obj) {
-    this.entList.push(obj);
+    if (obj.constructor.name.includes('Board')) {
+      this.board = obj;
+    } else {
+      this.entList.push(obj);
+    }
   }
   list() {
     return this.entList;
   }
   tick() {
     this.entList.forEach((entity) => {
-      entity.collide ?
-        entity.collide(this.frame) : null;
+      if (!entity.collide) { return }
+      var cell = entity.x && entity.y && this.board ? this.board.getCell(entity.x, entity.y) : undefined;
+      entity.collide(this.frame, cell, this.board.player, this.board.ghosts);
     });
     this.entList.forEach((entity) => {
-      entity.tick ?
-        entity.tick(this.frame) : null;
+      if (!entity.tick) { return }
+      var cell = entity.x && entity.y && this.board ? this.board.getCell(entity.x, entity.y) : undefined;
+      entity.tick(this.frame, cell, this.board.player, this.board.ghosts);
     });
     this.entList.forEach((entity) => {
-      entity.draw ?
-        entity.draw(this.frame) : null;
+      if (!entity.draw) { return }
+      var cell = entity.x && entity.y && this.board ? this.board.getCell(entity.x, entity.y) : undefined;
+      entity.draw(this.frame, cell, this.board.player, this.board.ghosts);
     });
     this.frame++;
   }
