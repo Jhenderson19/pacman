@@ -345,7 +345,7 @@ eval("module.exports = class Entity {\n  constructor(options = {}) {\n    if (op
   \*********************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("const Entity = __webpack_require__(/*! ../entity */ \"./src/bin/classes/entity.js\");\n\nmodule.exports = class GhostGate extends Entity {\n  constructor(options = {}) {\n    super(options);\n    this.pathable = false;\n    this.hidden = false;\n    this.entID = 'static_ghostgate';\n    this._renderData.pixelHeight = 4;\n    this._renderData.pixelYOffset += this._renderData.posMult/3;\n  }\n  prepDraw(canvas) {\n    let pixeldata = this.getPixelData();\n    this._renderData.render = canvas.display.rectangle({\n      ...pixeldata,\n      fill: '#FFF'\n    });\n    canvas.addChild(this._renderData.render);\n    this._renderData.ready = true;\n  }\n  draw(canvas, frame, cell, player, ghosts = []) {\n\n  }\n}\n\n//# sourceURL=webpack://pacman/./src/bin/classes/static/GhostGate.js?");
+eval("const Entity = __webpack_require__(/*! ../entity */ \"./src/bin/classes/entity.js\");\n\nmodule.exports = class GhostGate extends Entity {\n  constructor(options = {}) {\n    super(options);\n    this.pathable = false;\n    this.hidden = false;\n    this.entID = 'static_ghostgate';\n    this._renderData.pixelHeight = 4;\n    this._renderData.pixelYOffset += this._renderData.posMult/3;\n  }\n  prepDraw(canvas) {\n    let pixeldata = this.getPixelData();\n    this._renderData.cObject = canvas.display.rectangle({\n      ...pixeldata,\n      fill: '#FFF'\n    });\n    canvas.addChild(this._renderData.cObject);\n    this._renderData.ready = true;\n  }\n  draw(canvas, frame, cell, player, ghosts = []) {\n\n  }\n}\n\n//# sourceURL=webpack://pacman/./src/bin/classes/static/GhostGate.js?");
 
 /***/ }),
 
@@ -355,7 +355,7 @@ eval("const Entity = __webpack_require__(/*! ../entity */ \"./src/bin/classes/en
   \****************************************/
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
-eval("const Entity = __webpack_require__(/*! ../entity */ \"./src/bin/classes/entity.js\");\n\nmodule.exports = class Wall extends Entity {\n  constructor(options = {}) {\n    super(options);\n    this.pathable = false;\n    this.entID = 'static_wall';\n  }\n\n  prepDraw(canvas) {\n    let pixeldata = this.getPixelData();\n    this._renderData.render = canvas.display.rectangle({\n      ...pixeldata,\n      fill: '#000',\n      stroke: 'inside 2px #00f'\n    });\n    canvas.addChild(this._renderData.render);\n    this._renderData.ready = true;\n  }\n\n  draw(canvas, frame, cell, player, ghosts = []) {\n\n  }\n}\n\n//# sourceURL=webpack://pacman/./src/bin/classes/static/Wall.js?");
+eval("const Entity = __webpack_require__(/*! ../entity */ \"./src/bin/classes/entity.js\");\n\nmodule.exports = class Wall extends Entity {\n  constructor(options = {}) {\n    super(options);\n    this.pathable = false;\n    this.entID = 'static_wall';\n  }\n\n  prepDraw(canvas) {\n    let pixeldata = this.getPixelData();\n    this._renderData.cObject = canvas.display.rectangle({\n      ...pixeldata,\n      fill: '#000',\n      stroke: 'inside 2px #00f'\n    });\n    canvas.addChild(this._renderData.cObject);\n    this._renderData.ready = true;\n  }\n\n  draw(canvas, frame, cell, player, ghosts = []) {\n\n  }\n}\n\n//# sourceURL=webpack://pacman/./src/bin/classes/static/Wall.js?");
 
 /***/ }),
 

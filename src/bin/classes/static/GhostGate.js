@@ -11,11 +11,11 @@ module.exports = class GhostGate extends Entity {
   }
   prepDraw(canvas) {
     let pixeldata = this.getPixelData();
-    this._renderData.render = canvas.display.rectangle({
+    this._renderData.cObject = canvas.display.rectangle({
       ...pixeldata,
       fill: '#FFF'
     });
-    canvas.addChild(this._renderData.render);
+    canvas.addChild(this._renderData.cObject);
     this._renderData.ready = true;
   }
   draw(canvas, frame, cell, player, ghosts = []) {

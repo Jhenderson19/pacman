@@ -9,12 +9,12 @@ module.exports = class Wall extends Entity {
 
   prepDraw(canvas) {
     let pixeldata = this.getPixelData();
-    this._renderData.render = canvas.display.rectangle({
+    this._renderData.cObject = canvas.display.rectangle({
       ...pixeldata,
       fill: '#000',
       stroke: 'inside 2px #00f'
     });
-    canvas.addChild(this._renderData.render);
+    canvas.addChild(this._renderData.cObject);
     this._renderData.ready = true;
   }
 
