@@ -17,3 +17,4 @@ const canvas = oCanvas.create({
 Ticker.setCanvas(canvas);
 var board = new Board();
 window.ticker.register(board);
+Ticker.startTick();

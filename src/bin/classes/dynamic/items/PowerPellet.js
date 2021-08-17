@@ -8,4 +8,8 @@ module.exports = class PowerPellet extends Pellet {
   collect() {
     console.log('POWERPELLET COLLECTED! GET EM BOYS');
   }
+  prepDraw(canvas) {
+    super.prepDraw(canvas);
+    this._renderData.cObject.radius *= 2;
+  }
 }

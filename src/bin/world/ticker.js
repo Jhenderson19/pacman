@@ -43,12 +43,14 @@ class Ticker {
   }
   startTick() {
     if (!this.ticking) {
+      console.log('Starting Ticking!');
       this.intervalDigit = setInterval(this.tick.bind(this), this.tickInterval);
       this.ticking = true;
     }
   }
   stopTick() {
     if (this.ticking) {
+      console.log('Stopping Ticking!');
       clearInterval(this.intervalDigit);
       this.ticking = false;
     }
