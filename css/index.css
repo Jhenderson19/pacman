@@ -1,0 +1,9 @@
+#app {
+  margin: auto;
+  width: 650px;
+}
+
+#title {
+  text-align: center;
+  font-family: consolas, Verdana, Geneva, Tahoma, sans-serif
+}
