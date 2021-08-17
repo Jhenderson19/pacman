@@ -36,7 +36,7 @@ class Ticker {
     this.entList.forEach((entity) => {
       if (!entity.draw || !this.canvas) { return }
       var cell = entity.x && entity.y && this.board ? this.board.getCell(entity.x, entity.y) : undefined;
-      !entity._renderData.ready && entity.prepDraw ? entity.prepDraw(this.canvas) : undefined;
+      (!entity._renderData.ready && entity.prepDraw) ? entity.prepDraw(this.canvas) : undefined;
       entity.draw(this.canvas, this.frame, cell, this.board.player, this.board.ghosts);
     });
     this.frame++;

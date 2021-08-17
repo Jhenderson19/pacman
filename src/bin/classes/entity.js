@@ -12,9 +12,9 @@ module.exports = class Entity {
 
     this._renderData = {
       ready: false,
-      posMult: 24,
-      pixelHeight: 24,
-      pixelWidth: 24,
+      posMult: window.defaultTileSize,
+      pixelHeight: window.defaultTileSize,
+      pixelWidth: window.defaultTileSize,
       pixelXOffset: 0,
       pixelYOffset: 0
     }
