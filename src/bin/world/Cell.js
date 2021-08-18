@@ -47,9 +47,13 @@ class Cell {
     return results;
   }
   pathable() {
-    return this.contents.reduce((entity, pathable) => {
-      return entity.pathable && pathable;
-    }, true);
+    if(this.contents.length === 0) { return true };
+    for (let entity in this.contents) {
+      if (this.contents[entity].pathable === false) {
+        return false;
+      }
+    }
+    return true;
   }
   _setNeighbors(neighbors) {
     if(this.neighbors.length === 0) {

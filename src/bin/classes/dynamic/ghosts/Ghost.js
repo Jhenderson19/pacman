@@ -33,8 +33,16 @@ module.exports = class Ghost extends Entity {
   }
   tick(data) {
     if (!this.trapped) {
-      while(!data.cell.neighbors[this.direction].pathable() && Math.max(Math.abs(this.offsetx), Math.abs(this.offsety) > 50)) {
+      while(!data.cell.neighbors[this.direction].pathable() && Math.max(Math.abs(this.offsetx), Math.abs(this.offsety)) > (100 - this.speed)) {
+        console.log(data.cell);
+        console.log('Current Cell Pathability:', data.cell.pathable());
+        console.log('Heading', this.direction);
+        console.log('Next Cell Pathability:', data.cell.neighbors[this.direction].pathable());
         this.direction = ['north', 'west', 'east', 'south'][Math.floor(Math.random()*4)];
+        console.log('Changed Direction Randomly:',this.direction);
+        console.log('New Next Cell Pathability:', data.cell.neighbors[this.direction].pathable());
+        console.log('\n\n');
+
       }
     } else {
       if(Math.abs(this.offsety) > 98) {
