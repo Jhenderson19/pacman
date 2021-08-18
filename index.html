@@ -4,6 +4,17 @@
     <title>
       Pacman - James Henderson
     </title>
+    <script>
+      window.pausefunc = () => {
+        window.pause = !window.pause;
+        console.log(`toggle pause ${window.pause}`);
+      }
+      window.freeze = () => {
+        window.ticker.board.ghosts.forEach(ghost => {
+          ghost.speed = 0;
+        });
+      }
+    </script>
     <link rel='stylesheet' href='/css/index.css'/>
   </head>
   <body>
@@ -11,6 +22,9 @@
     <div id="app">
       <canvas id='pacmanGame' width="672" height="744"></canvas>
     </div>
+    <button onclick="pausefunc()">pause</button>
+    <button onclick="freeze()">freeze ghosts</button>
     <script src="compiled/bundle.js"></script>
+
   </body>
 </html>

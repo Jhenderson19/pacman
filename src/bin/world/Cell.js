@@ -1,6 +1,7 @@
 class Cell {
   constructor(objects = []) {
     this.contents = objects.slice(0);
+    this.neighbors = [];
   }
   insert(object) {
     this.contents.push(object);
@@ -9,7 +10,7 @@ class Cell {
     /*
       Removes an object by reference from a cell.
     */
-    for(let i = 0; i < this.contents.length; i++) {
+    for (let i = 0; i < this.contents.length; i++) {
       if (this.contents[i] === object) {
         this.contents.splice(i, 1);
         return true;
@@ -20,18 +21,18 @@ class Cell {
   contains(entID) {
     var results = [];
     for (let i in this.contents) {
-      if(typeof entID === 'string') {
-        if(this.contents[i].entID === entID) {
+      if (typeof entID === 'string') {
+        if (this.contents[i].entID === entID) {
           return this.contents[i];
         }
       } else if (entID instanceof RegExp) {
-        if(entID.test(this.contents[i].entID)) {
+        if (entID.test(this.contents[i].entID)) {
           results.push(this.contents[i]);
         }
       }
     }
-    if(entID instanceof RegExp){
-      if(results.length === 0) {
+    if (entID instanceof RegExp) {
+      if (results.length === 0) {
         return false;
       }
       return results;
@@ -40,10 +41,22 @@ class Cell {
   }
   listTypes() {
     var results = [];
-    for(let i in this.contents){
+    for (let i in this.contents) {
       results.push(this.contents[i].entID);
     }
     return results;
+  }
+  pathable() {
+    return this.contents.reduce((entity, pathable) => {
+      return entity.pathable && pathable;
+    }, true);
+  }
+  _setNeighbors(neighbors) {
+    if(this.neighbors.length === 0) {
+      this.neighbors = neighbors;
+    } else {
+      throw 'Cell._setNeighbors to be called once only!';
+    }
   }
 }
 

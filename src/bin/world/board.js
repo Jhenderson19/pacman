@@ -13,6 +13,7 @@ const GhostGate = require('../classes/static/GhostGate');
 //World
 const spawn = require('./spawner');
 const Cell = require('./Cell');
+const NavMesh = require('./NavMesh');
 
 class Board {
   constructor() {
@@ -60,7 +61,7 @@ class Board {
       w.wwwwwwwwww.ww.wwwwwwwwww.w
       w..........................w
       wwwwwwwwwwwwwwwwwwwwwwwwwwww`.replace(/ /g, '');
-    if(!/^[w\.o_Pipbc\n-]+$/.test(this.layout)) {
+    if (!/^[w\.o_Pipbc\n-]+$/.test(this.layout)) {
       throw 'INVALID CHARACTER IN BOARD LAYOUT STRING'
     }
     this.layoutArr = this.layout.split('\n');
@@ -73,43 +74,44 @@ class Board {
     this.height = this.board.length;
     this.width = this.board[0].length;
 
-    for(let y = 0; y < this.board.length; y++) {
-      for(let x = 0; x < this.board[0].length; x++) {
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        this.getCell(x, y)._setNeighbors(this.getCellNeighbors(x, y));
         let g = '';
-        switch (this.layoutArr[y][x]){
+        switch (this.layoutArr[y][x]) {
           case 'w':
-            this.board[y][x].insert(spawn(Wall, {x, y}));
+            this.board[y][x].insert(spawn(Wall, { x, y }));
             break;
           case '.':
-            this.board[y][x].insert(spawn(Pellet, {x, y}));
+            this.board[y][x].insert(spawn(Pellet, { x, y }));
             break;
           case 'o':
-            this.board[y][x].insert(spawn(PowerPellet, {x, y}));
+            this.board[y][x].insert(spawn(PowerPellet, { x, y }));
             break;
           case '-':
-            this.board[y][x].insert(spawn(GhostGate, {x, y}));
+            this.board[y][x].insert(spawn(GhostGate, { x, y }));
             break;
           case 'P':
-            this.player = spawn(Pacman, {x, y});
+            this.player = spawn(Pacman, { x, y });
             this.board[y][x].insert(this.player);
             break;
           case 'i':
-            g = spawn(Inky, {x, y});
+            g = spawn(Inky, { x, y });
             this.ghosts.push(g);
             this.board[y][x].insert(g);
             break;
           case 'p':
-            g = spawn(Pinky, {x, y});
+            g = spawn(Pinky, { x, y });
             this.ghosts.push(g);
             this.board[y][x].insert(g);
             break;
           case 'b':
-            g = spawn(Blinky, {x, y});
+            g = spawn(Blinky, { x, y });
             this.ghosts.push(g);
             this.board[y][x].insert(g);
             break;
           case 'c':
-            g = spawn(Clyde, {x, y});
+            g = spawn(Clyde, { x, y });
             this.ghosts.push(g);
             this.board[y][x].insert(g);
             break;
@@ -123,12 +125,12 @@ class Board {
       var rowstr = ''
       for (let j = 0; j < this.width; j++) {
         this.board[i][j].contains('static_wall') ? rowstr += '%%' :
-        this.board[i][j].contains('static_ghostgate') ? rowstr += '--' :
-        this.board[i][j].contains('item_pellet') ? rowstr += ' º' :
-        this.board[i][j].contains('item_powerpellet') ? rowstr += ' ⁕' :
-        this.board[i][j].contains('player_pacman') ? rowstr += '😏' :
-        this.board[i][j].contains(/ghost/) ? rowstr += '👻' :
-          rowstr += '  ';
+          this.board[i][j].contains('static_ghostgate') ? rowstr += '--' :
+            this.board[i][j].contains('item_pellet') ? rowstr += ' º' :
+              this.board[i][j].contains('item_powerpellet') ? rowstr += ' ⁕' :
+                this.board[i][j].contains('player_pacman') ? rowstr += '😏' :
+                  this.board[i][j].contains(/ghost/) ? rowstr += '👻' :
+                    rowstr += '  ';
       }
       console.log(rowstr);
     }
@@ -147,6 +149,42 @@ class Board {
   }
   getCell(x, y) {
     return this.board[y][x];
+  }
+  getCellNeighbors(x, y) {
+    var results = {};
+
+    let loopify = (x, y) => {
+      if (x === -1) {
+        x = this.width - 1;
+      }
+      if (x === this.width) {
+        x = 0;
+      }
+      if (y === -1) {
+        y = this.height - 1;
+      }
+      if (y === this.height) {
+        y = 0;
+      }
+      return this.getCell(x, y);
+    }
+    results.north = loopify(x, y - 1);
+    results.south = loopify(x, y + 1);
+    results.east = loopify(x + 1, y);
+    results.west = loopify(x - 1, y);
+
+    return results;
+  }
+
+  nav_generate() {
+    for (let i = 0; i < this.height; i++) {
+      for (let j = 0; j < this.width; j++) {
+        if (this.getCell(i, j).pathable()) {
+          this.navMesh = new NavMesh(i, j, this);
+          return;
+        }
+      }
+    }
   }
 }
 

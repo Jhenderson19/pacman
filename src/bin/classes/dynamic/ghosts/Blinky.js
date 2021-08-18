@@ -6,5 +6,7 @@ module.exports = class Blinky extends Ghost{
     this.colors = 'FF0000';
     this.direction = 'west';
     this.entID = 'ghost_blinky';
+    this.trapped = options.trapped !== undefined ? options.trapped : false;
+
   }
 }

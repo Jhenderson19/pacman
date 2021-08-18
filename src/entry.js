@@ -3,6 +3,7 @@ const Ticker = require('./bin/world/ticker'); window.ticker = Ticker; //For Dev 
 const oCanvas = require('ocanvas');
 
 window.defaultTileSize = 26;
+window.pause = false;
 document.getElementById('pacmanGame').setAttribute('width', window.defaultTileSize * 28);
 document.getElementById('pacmanGame').setAttribute('height', window.defaultTileSize * 31);
 
@@ -10,8 +11,7 @@ document.getElementById('pacmanGame').setAttribute('height', window.defaultTileS
 //prepare canvas to render to
 const canvas = oCanvas.create({
   canvas: "#pacmanGame",
-  background: "#000",
-  fps: 60
+  background: "#000"
 });
 
 Ticker.setCanvas(canvas);

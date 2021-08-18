@@ -1,13 +1,59 @@
 class Ticker {
-  constructor(canvas) {
+  constructor(fps = 30) {
     this.entList = [];
-    this.frame = 0;
-    this.tickInterval = Math.floor(1000 / 16);
+    this.tickInterval = Math.floor(1000 / fps);
+    this.fps;
     this.intervalDigit = 0;
     this.ticking = false;
   }
   setCanvas(canvas) {
     this.canvas = canvas;
+    this.canvas.timeline.fps = this.fps;
+    canvas.setLoop(() => {
+      if(window.pause) { return }
+      //Handle collisions
+      this.entList.forEach((entity) => {
+        if (!entity.collide) { return }
+
+        var data = {
+          frame: this.canvas.timeline.currentFrame,
+          cell: entity.x && entity.y && this.board ? this.board.getCell(entity.x, entity.y) : undefined,
+          player: this.board.player,
+          ghosts: this.board.ghosts
+        }
+
+        entity.collide(data);
+      });
+      //Handle ticks
+      this.entList.forEach((entity) => {
+        if (!entity.tick) { return }
+
+        var data = {
+          frame: this.canvas.timeline.currentFrame,
+          cell: entity.x && entity.y && this.board ? this.board.getCell(entity.x, entity.y) : undefined,
+          player: this.board.player,
+          ghosts: this.board.ghosts,
+          board: {width: this.board.width, height: this.board.height}
+        }
+
+        entity.tick(data);
+      });
+      //Handle Render
+      this.entList.forEach((entity) => {
+        if (!entity.draw || !this.canvas) { return }
+        (!entity._renderData.ready && entity.prepDraw) ? entity.prepDraw(this.canvas) : undefined; //Prepare the object to be drawn
+
+        var data = {
+          canvas: this.canvas,
+          frame: this.canvas.timeline.currentFrame,
+          cell: entity.x && entity.y && this.board ? this.board.getCell(entity.x, entity.y) : undefined,
+          player: this.board.player,
+          ghosts: this.board.ghosts
+        }
+
+        entity.draw(data);
+      });
+    })
   }
   register(obj) {
     if (obj.constructor.name.includes('Board')) {
@@ -19,39 +65,18 @@ class Ticker {
   list() {
     return this.entList;
   }
-  tick() {
-    //Handle Collisions
-    this.entList.forEach((entity) => {
-      if (!entity.collide) { return }
-      var cell = entity.x && entity.y && this.board ? this.board.getCell(entity.x, entity.y) : undefined;
-      entity.collide(this.frame, cell, this.board.player, this.board.ghosts);
-    });
-    //Handle ticks
-    this.entList.forEach((entity) => {
-      if (!entity.tick) { return }
-      var cell = entity.x && entity.y && this.board ? this.board.getCell(entity.x, entity.y) : undefined;
-      entity.tick(this.frame, cell, this.board.player, this.board.ghosts);
-    });
-    //Handle Render
-    this.entList.forEach((entity) => {
-      if (!entity.draw || !this.canvas) { return }
-      var cell = entity.x && entity.y && this.board ? this.board.getCell(entity.x, entity.y) : undefined;
-      (!entity._renderData.ready && entity.prepDraw) ? entity.prepDraw(this.canvas) : undefined;
-      entity.draw(this.canvas, this.frame, cell, this.board.player, this.board.ghosts);
-    });
-    this.frame++;
-  }
+
   startTick() {
     if (!this.ticking) {
       console.log('Starting Ticking!');
-      this.intervalDigit = setInterval(this.tick.bind(this), this.tickInterval);
+      this.canvas.timeline.start();
       this.ticking = true;
     }
   }
   stopTick() {
     if (this.ticking) {
       console.log('Stopping Ticking!');
-      clearInterval(this.intervalDigit);
+      this.canvas.timeline.stop();
       this.ticking = false;
     }
   }

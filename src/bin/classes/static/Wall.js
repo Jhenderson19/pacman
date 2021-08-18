@@ -18,7 +18,6 @@ module.exports = class Wall extends Entity {
     this._renderData.ready = true;
   }
 
-  draw(canvas, frame, cell, player, ghosts = []) {
-
+  draw(data) {
   }
 }

@@ -12,7 +12,7 @@ module.exports = class Pacman extends Entity {
 
     //Render Help
     this._renderData.pixelYOffset = this._renderData.posMult/2;
-    this._renderData.pixelXOffset = this._renderData.posMult;
+    this._renderData.pixelXOffset = this._renderData.posMult/2;
   }
   prepDraw(canvas) {
     let pixeldata = this.getPixelData();
