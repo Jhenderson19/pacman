@@ -1,6 +1,6 @@
 const ticker = require('./ticker');
 
-var spawner = function(spawnTarget, options) {
+var spawner = function() {
   var id = 0;
   return function(spawnTarget, options) {
     var x = new spawnTarget({...options, id: id});

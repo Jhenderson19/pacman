@@ -3,12 +3,15 @@ module.exports = class Entity {
     if (options.id === undefined) {
       throw `Entity Spawned without ID!`;
     }
+    this.id = options.id;
 
     this.x = options.x;
     this.y = options.y;
     this.offsetx = 0; //-100 exit cell to left, 100 exit cell to right
     this.offsety = 0; //-100 exit cell to go up, 100 exit cell to go down
     this.pathable = options.pathable !== undefined ? options.pathable : true;
+
+    this.markedForDelete = false;
 
     this._renderData = {
       ready: false,
@@ -18,7 +21,13 @@ module.exports = class Entity {
       pixelXOffset: 0,
       pixelYOffset: 0
     }
-    this.id = options.id;
+  }
+  markForDelete() {
+    this.markedForDelete = true;
+    if (this._renderData.cObject) {
+      console.log('stopping render for', this);
+      this._renderData.cObject.remove();
+    }
   }
   getPixelData() {
     return {

@@ -12,6 +12,7 @@ module.exports = class Pellet extends Entity {
   }
   collect() {
     console.log('pellet collected!');
+    this.markForDelete();
   }
   prepDraw(canvas) {
 

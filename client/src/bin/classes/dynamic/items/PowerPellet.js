@@ -6,6 +6,7 @@ module.exports = class PowerPellet extends Pellet {
     this.entID = 'item_powerpellet';
   }
   collect() {
+    super.collect();
     console.log('POWERPELLET COLLECTED! GET EM BOYS');
   }
   prepDraw(canvas) {

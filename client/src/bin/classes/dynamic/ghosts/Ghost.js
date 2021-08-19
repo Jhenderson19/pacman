@@ -100,4 +100,5 @@ module.exports = class Ghost extends Entity {
     }
     this.moveCells(data.cell, data.board);
   }
+
 }

@@ -1,16 +1,5 @@
 //Entities
-const Wall = require('../classes/static/Wall');
-const Pellet = require('../classes/dynamic/items/Pellet');
-const PowerPellet = require('../classes/dynamic/items/PowerPellet');
-const Pacman = require('../classes/dynamic/players/Pacman');
-const Ghost = require('../classes/dynamic/ghosts/Ghost');
-const Inky = require('../classes/dynamic/ghosts/Inky');
-const Pinky = require('../classes/dynamic/ghosts/Pinky');
-const Blinky = require('../classes/dynamic/ghosts/Blinky');
-const Clyde = require('../classes/dynamic/ghosts/Clyde');
-const GhostGate = require('../classes/static/GhostGate');
-
-const entityRegistry = require('./entity-registry');
+const entReg = require('./entity-registry');
 
 //World
 const spawn = require('./spawner');
@@ -22,7 +11,6 @@ class Board {
     this.board = [[]];
     this.player;
     this.ghosts = [];
-    this.registry = entityRegistry;
     //w = wall
     //. = pellet
     //o = power pellet
@@ -83,40 +71,31 @@ class Board {
         let g = '';
         switch (this.layoutArr[y][x]) {
           case 'w':
-            this.board[y][x].insert(spawn(Wall, { x, y }));
+            this.spawn('Wall', { x, y });
             break;
           case '.':
-            this.board[y][x].insert(spawn(Pellet, { x, y }));
+            this.spawn('Pellet', { x, y });
             break;
           case 'o':
-            this.board[y][x].insert(spawn(PowerPellet, { x, y }));
+            this.spawn('PowerPellet', { x, y });
             break;
           case '-':
-            this.board[y][x].insert(spawn(GhostGate, { x, y }));
+            this.spawn('GhostGate', { x, y });
             break;
           case 'P':
-            this.player = spawn(Pacman, { x, y });
-            this.board[y][x].insert(this.player);
+            this.player = this.spawn('Pacman', { x, y });
             break;
           case 'i':
-            g = spawn(Inky, { x, y });
-            this.ghosts.push(g);
-            this.board[y][x].insert(g);
+            this.ghosts.push(this.spawn('Inky', { x, y }));
             break;
           case 'p':
-            g = spawn(Pinky, { x, y });
-            this.ghosts.push(g);
-            this.board[y][x].insert(g);
+            this.ghosts.push(this.spawn('Pinky', { x, y }));
             break;
           case 'b':
-            g = spawn(Blinky, { x, y });
-            this.ghosts.push(g);
-            this.board[y][x].insert(g);
+            this.ghosts.push(this.spawn('Blinky', { x, y }));
             break;
           case 'c':
-            g = spawn(Clyde, { x, y });
-            this.ghosts.push(g);
-            this.board[y][x].insert(g);
+            this.ghosts.push(this.spawn('Clyde', { x, y }));
             break;
         }
       }
@@ -178,7 +157,11 @@ class Board {
 
     return results;
   }
-
+  spawn(className, location) {
+    let obj = spawn(entReg.getEntity(className), location)
+    this.getCell(location.x, location.y).insert(obj);
+    return obj;
+  }
   nav_generate() {
     for (let i = 0; i < this.height; i++) {
       for (let j = 0; j < this.width; j++) {

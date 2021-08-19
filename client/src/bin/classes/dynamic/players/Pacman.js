@@ -28,4 +28,9 @@ module.exports = class Pacman extends Entity {
   draw(canvas) {
 
   }
+  collide(data){
+    for (let ent in data.cell.contents) {
+      data.cell.contents[ent].collect ? data.cell.contents[ent].collect() : null;
+    }
+  }
 }
