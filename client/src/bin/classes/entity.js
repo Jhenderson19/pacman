@@ -28,7 +28,7 @@ module.exports = class Entity {
       height: this._renderData.pixelHeight
     }
   }
-  moveCells(cell, board) {
+  moveCells(cell, boardMetadata) {
     if(!cell) {
       console.log('NO CELL!');
     }
@@ -39,26 +39,26 @@ module.exports = class Entity {
     }
     if(this.offsetx < -100) {
       this.x--;
-      this.x < 0 ? this.x = board.width - 1: null;
+      this.x < 0 ? this.x = boardMetadata.width - 1: null;
       this.offsetx += 201;
       cell.remove(this);
       cell.neighbors.west.insert(this);
     } else if(this.offsetx > 100) {
       this.x++;
-      this.x >= board.width ? this.x = 0: null;
+      this.x >= boardMetadata.width ? this.x = 0: null;
       this.offsetx -= 201;
       cell.remove(this);
       cell.neighbors.east.insert(this);
     }
     if(this.offsety < -100) {
       this.y--;
-      this.y < 0 ? this.y = board.height - 1: null;
+      this.y < 0 ? this.y = boardMetadata.height - 1: null;
       this.offsety += 201;
       cell.remove(this);
       cell.neighbors.north.insert(this);
     } else if(this.offsety > 100) {
       this.y++;
-      this.y > board.height ? this.y = 0: null;
+      this.y > boardMetadata.height ? this.y = 0: null;
       this.offsety -= 201;
       cell.remove(this);
       cell.neighbors.south.insert(this);
