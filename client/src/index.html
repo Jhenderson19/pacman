@@ -6,8 +6,8 @@
     </title>
     <script>
       window.pausefunc = () => {
-        window.pause = !window.pause;
-        console.log(`toggle pause ${window.pause}`);
+        window.ticker.board.toggleState('paused');
+        console.log(`toggled pause`);
       }
       window.freeze = () => {
         window.ticker.board.ghosts.forEach(ghost => {
@@ -22,6 +22,7 @@
     <div id="app">
       <canvas id='pacmanGame' width="672" height="744"></canvas>
     </div>
+    <div>Game Speed: <span id='fps'></span></div>
     <button onclick="pausefunc()">pause</button>
     <button onclick="freeze()">freeze ghosts</button>
   </body>

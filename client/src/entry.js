@@ -1,9 +1,9 @@
 const Board = require('./bin/world/Board');
 const ticker = require('./bin/world/ticker'); window.ticker = ticker; //For Dev Purposes
+const eventHandler = require('./bin/world/GameEventHandler');
 const oCanvas = require('ocanvas');
 
 window.defaultTileSize = 26;
-window.pause = false;
 document.getElementById('pacmanGame').setAttribute('width', window.defaultTileSize * 28);
 document.getElementById('pacmanGame').setAttribute('height', window.defaultTileSize * 31);
 
@@ -15,5 +15,6 @@ const canvas = oCanvas.create({
 });
 
 ticker.setCanvas(canvas);
+ticker.setEventHandler(eventHandler);
 window.ticker.register(new Board());
 ticker.startTick();

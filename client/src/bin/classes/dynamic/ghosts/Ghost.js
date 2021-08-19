@@ -4,7 +4,7 @@ module.exports = class Ghost extends Entity {
   constructor(options) {
     super(options);
     this.pathable = true;
-    this.speed = options.speed || 20;
+    this.speed = options.speed || 25;
     this.speedMult = 1;
     this.colors = '1E1E1E';
     this.direction = 'east';
@@ -32,6 +32,11 @@ module.exports = class Ghost extends Entity {
     let pixeldata = this.getPixelData();
     this._renderData.cObject.x = pixeldata.x;
     this._renderData.cObject.y = pixeldata.y;
+    if( data.checkState('ScaredGhosts') ) {
+      this._renderData.cObject.fill = data.frame % 50 > 25 ? '#FFF' : '#00F';
+    } else {
+      this._renderData.cObject.fill = '#' + this.colors;
+    }
   }
   readyToTurn(data) {
     let numOfpaths = 0;
@@ -63,6 +68,11 @@ module.exports = class Ghost extends Entity {
     }
   }
   tick(data) {
+    if(data.checkState('scaredghosts')) {
+      this.speedMult = .65;
+    } else {
+      this.speedMult = 1;
+    }
     if (!this.trapped) {
       if(this.readyToTurn(data)) {
         this.pickTurnDirection(data);
@@ -74,25 +84,25 @@ module.exports = class Ghost extends Entity {
     }
     switch(this.direction) {
       case 'east':
-        this.offsetx += this.speed;
+        this.offsetx += this.speed * this.speedMult;
         if(!this.trapped) {
           this.offsety = 0;
         }
         break;
       case 'west':
-        this.offsetx -= this.speed;
+        this.offsetx -= this.speed * this.speedMult;
         if(!this.trapped) {
           this.offsety = 0;
         }
         break;
       case 'north':
-        this.offsety -= this.speed;
+        this.offsety -= this.speed * this.speedMult;
         if(!this.trapped) {
           this.offsetx = 0;
         }
         break;
       case 'south':
-        this.offsety += this.speed;
+        this.offsety += this.speed * this.speedMult;
         if(!this.trapped) {
           this.offsetx = 0;
         }
@@ -100,5 +110,9 @@ module.exports = class Ghost extends Entity {
     }
     this.moveCells(data.cell, data.board);
   }
-
+  // collide(data, eventHandler){
+  //   for (let ent in data.cell.contents) {
+  //     data.cell.contents[ent].collect ? data.cell.contents[ent].collect(eventHandler) : null;
+  //   }
+  // }
 }

@@ -25,7 +25,6 @@ module.exports = class Entity {
   markForDelete() {
     this.markedForDelete = true;
     if (this._renderData.cObject) {
-      console.log('stopping render for', this);
       this._renderData.cObject.remove();
     }
   }

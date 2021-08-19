@@ -7,11 +7,16 @@ class GameEventHandler {
     this.queue.push({name, payload});
   }
 
-  handleEvent() {
+  handleEvent(board) {
     var event = this.queue.shift();
-    if (event.name === 'pelletCollect') {
+    event.payload(board);
+  }
 
+  handleAll(board, fps) {
+    while (this.queue.length) {
+      this.handleEvent(board);
     }
+    board.tickTimers(fps);
   }
 }
 

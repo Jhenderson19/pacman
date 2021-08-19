@@ -28,9 +28,15 @@ module.exports = class Pacman extends Entity {
   draw(canvas) {
 
   }
-  collide(data){
+  collide(data, eventHandler){
     for (let ent in data.cell.contents) {
-      data.cell.contents[ent].collect ? data.cell.contents[ent].collect() : null;
+      if(data.checkState('scaredGhosts')) {
+        //Kill the ghost
+      }
+      data.cell.contents[ent].collect ? data.cell.contents[ent].collect(eventHandler) : null;
     }
+  }
+  kill(eventHandler) {
+    console.log('killed',this);
   }
 }

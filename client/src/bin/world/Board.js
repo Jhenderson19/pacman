@@ -11,6 +11,10 @@ class Board {
     this.board = [[]];
     this.player;
     this.ghosts = [];
+    this.gameStates = [
+      'playing'
+    ]
+    this.stateTimers = [];
     //w = wall
     //. = pellet
     //o = power pellet
@@ -156,6 +160,49 @@ class Board {
     results.west = loopify(x - 1, y);
 
     return results;
+  }
+  toggleState(stateStr = '') {
+    if(this.checkState(stateStr)) {
+      this.removeState(stateStr);
+      return false;
+    } else {
+      this.addState(stateStr);
+      return true;
+    }
+  }
+  addStateTemporary(stateStr = '', duration = 8){
+    this.addState(stateStr.toLowerCase());
+    this.stateTimers[stateStr.toLowerCase()] = duration * 1000;
+  }
+  tickTimers(fps) {
+    for(let state in this.stateTimers) {
+      this.stateTimers[state] -= 1000/fps;
+    }
+    this.removeExpiredStates();
+  }
+  removeExpiredStates() {
+    for(let state in this.stateTimers) {
+      if(this.stateTimers[state] < 0) {
+        console.log('removing state:', state);
+        this.removeState(state);
+      }
+    }
+  }
+  addState(stateStr = '') {
+    if(!this.checkState(stateStr)) {
+      this.gameStates.push(stateStr.toLowerCase());
+      return true;
+    }
+    return false;
+  }
+  checkState(stateStr = '') {
+    return this.gameStates.indexOf(stateStr.toLowerCase()) > -1;
+  }
+  removeState(stateStr) {
+    while(this.gameStates.indexOf(stateStr.toLowerCase()) > -1) {
+      this.gameStates.splice(this.gameStates.indexOf(stateStr.toLowerCase()),1);
+      delete this.stateTimers[stateStr.toLowerCase()];
+    }
   }
   spawn(className, location) {
     let obj = spawn(entReg.getEntity(className), location)

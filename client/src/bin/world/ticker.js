@@ -1,20 +1,27 @@
 class Ticker {
-  constructor(fps = 30) {
+  constructor(fps = 60) {
     this.entList = [];
     this.tickInterval = Math.floor(1000 / fps);
-    this.fps;
+    this.fps = fps;
     this.intervalDigit = 0;
     this.ticking = false;
+  }
+  setEventHandler(eventHandler) {
+    this.eventHandler = eventHandler;
   }
   setCanvas(canvas) {
     this.canvas = canvas;
     this.canvas.timeline.fps = this.fps;
+    let lastTime = 0;
     canvas.setLoop(() => {
-      if(window.pause) { return }
+      if(this.board.checkState('Paused')) { return }
       this.handleTicks();
       this.handleCollides();
       this.handleDeletes();
       this.handleDraws();
+      this.eventHandler.handleAll(this.board, this.fps);
+      document.getElementById('fps').innerHTML = (''+ (100 * (1000 / (Date.now() - lastTime)) / this.fps)).slice(0, 4) + '%';
+      lastTime = Date.now();
     })
   }
   register(obj) {
@@ -36,7 +43,6 @@ class Ticker {
         ghosts: this.board.ghosts
       }
       if (entity.markedForDelete) {
-        console.log(`Deleting Entity:`,entity);
         this.entList.splice(index, 1);
         data.cell.remove(entity);
       }
@@ -50,10 +56,11 @@ class Ticker {
         frame: this.canvas.timeline.currentFrame,
         cell: entity.x !== undefined && entity.y !== undefined && this.board ? this.board.getCell(entity.x, entity.y) : undefined,
         player: this.board.player,
-        ghosts: this.board.ghosts
+        ghosts: this.board.ghosts,
+        checkState: this.board.checkState.bind(this.board)
       }
 
-      entity.collide(data);
+      entity.collide(data, this.eventHandler);
     });
   }
   handleTicks() {
@@ -65,10 +72,11 @@ class Ticker {
         cell: entity.x !== undefined && entity.y !== undefined && this.board ? this.board.getCell(entity.x, entity.y) : undefined,
         player: this.board.player,
         ghosts: this.board.ghosts,
-        board: {width: this.board.width, height: this.board.height, getCell: this.board.getCell.bind(this.board)}
+        board: {width: this.board.width, height: this.board.height, getCell: this.board.getCell.bind(this.board)},
+        checkState: this.board.checkState.bind(this.board)
       }
 
-      entity.tick(data);
+      entity.tick(data, this.eventHandler);
     });
   }
   handleDraws() {
@@ -81,7 +89,8 @@ class Ticker {
         frame: this.canvas.timeline.currentFrame,
         cell: entity.x !== undefined && entity.y !== undefined && this.board ? this.board.getCell(entity.x, entity.y) : undefined,
         player: this.board.player,
-        ghosts: this.board.ghosts
+        ghosts: this.board.ghosts,
+        checkState: this.board.checkState.bind(this.board)
       }
 
       entity.draw(data);
