@@ -1,5 +1,5 @@
-const Board = require('./bin/world/board');
-const Ticker = require('./bin/world/ticker'); window.ticker = Ticker; //For Dev Purposes
+const Board = require('./bin/world/Board');
+const ticker = require('./bin/world/ticker'); window.ticker = ticker; //For Dev Purposes
 const oCanvas = require('ocanvas');
 
 window.defaultTileSize = 26;
@@ -14,7 +14,6 @@ const canvas = oCanvas.create({
   background: "#000"
 });
 
-Ticker.setCanvas(canvas);
-var board = new Board();
-window.ticker.register(board);
-Ticker.startTick();
+ticker.setCanvas(canvas);
+window.ticker.register(new Board());
+ticker.startTick();

@@ -10,6 +10,8 @@ const Blinky = require('../classes/dynamic/ghosts/Blinky');
 const Clyde = require('../classes/dynamic/ghosts/Clyde');
 const GhostGate = require('../classes/static/GhostGate');
 
+const entityRegistry = require('./entity-registry');
+
 //World
 const spawn = require('./spawner');
 const Cell = require('./Cell');
@@ -20,6 +22,7 @@ class Board {
     this.board = [[]];
     this.player;
     this.ghosts = [];
+    this.registry = entityRegistry;
     //w = wall
     //. = pellet
     //o = power pellet

@@ -17,7 +17,7 @@ class Ticker {
 
         var data = {
           frame: this.canvas.timeline.currentFrame,
-          cell: entity.x && entity.y && this.board ? this.board.getCell(entity.x, entity.y) : undefined,
+          cell: entity.x !== undefined && entity.y !== undefined && this.board ? this.board.getCell(entity.x, entity.y) : undefined,
           player: this.board.player,
           ghosts: this.board.ghosts
         }
@@ -30,10 +30,10 @@ class Ticker {
 
         var data = {
           frame: this.canvas.timeline.currentFrame,
-          cell: entity.x && entity.y && this.board ? this.board.getCell(entity.x, entity.y) : undefined,
+          cell: entity.x !== undefined && entity.y !== undefined && this.board ? this.board.getCell(entity.x, entity.y) : undefined,
           player: this.board.player,
           ghosts: this.board.ghosts,
-          board: {width: this.board.width, height: this.board.height}
+          board: {width: this.board.width, height: this.board.height, getCell: this.board.getCell.bind(this.board)}
         }
 
         entity.tick(data);
@@ -46,7 +46,7 @@ class Ticker {
         var data = {
           canvas: this.canvas,
           frame: this.canvas.timeline.currentFrame,
-          cell: entity.x && entity.y && this.board ? this.board.getCell(entity.x, entity.y) : undefined,
+          cell: entity.x !== undefined && entity.y !== undefined && this.board ? this.board.getCell(entity.x, entity.y) : undefined,
           player: this.board.player,
           ghosts: this.board.ghosts
         }
