@@ -19,8 +19,8 @@ module.exports = class Pellet extends Entity {
     this._renderData.cObject = canvas.display.ellipse({
       x: pixeldata.x,
       y: pixeldata.y,
-      fill: '#FFF',
-      radius: this._renderData.posMult / 6
+      fill: '#FCC',
+      radius: this._renderData.posMult / 10
     })
     canvas.addChild(this._renderData.cObject);
     this._renderData.ready = true;

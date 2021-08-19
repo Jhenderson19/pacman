@@ -10,9 +10,9 @@ module.exports = class PowerPellet extends Pellet {
   }
   prepDraw(canvas) {
     super.prepDraw(canvas);
-    this._renderData.cObject.radius *= 2;
+    this._renderData.cObject.radius *= 4;
   }
   draw(data) {
-    this._renderData.cObject.fill = data.frame % 20 > 10 ?  '#000' : '#FFF';
+    this._renderData.cObject.fill = data.frame % 20 > 10 ?  '#000' : '#FCC';
   }
 }
