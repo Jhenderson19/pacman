@@ -1,5 +1,5 @@
 const Entity = require('../../entity');
-
+let entID = 'ghost_default';
 module.exports = class Ghost extends Entity {
   constructor(options) {
     super(options);
@@ -8,7 +8,7 @@ module.exports = class Ghost extends Entity {
     this.speedMult = 1;
     this.colors = '1E1E1E';
     this.direction = 'east';
-    this.entID = 'ghost_default';
+    this.entID = entID;
     this.offsetx = -100;
     this.lastTurnLoc = {x: this.x, y: this.y};
 
@@ -16,7 +16,7 @@ module.exports = class Ghost extends Entity {
     this._renderData.pixelYOffset = this._renderData.posMult/2;
     this._renderData.pixelXOffset = this._renderData.posMult/2;
   }
-
+  static entID = entID;
   prepDraw(canvas) {
     let pixeldata = this.getPixelData();
     this._renderData.cObject = canvas.display.ellipse({

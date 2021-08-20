@@ -1,5 +1,5 @@
 const Entity = require('../../entity');
-
+let entID = 'player_pacman';
 module.exports = class Pacman extends Entity {
   constructor(options) {
     super(options);
@@ -8,7 +8,7 @@ module.exports = class Pacman extends Entity {
     this.speedMults = {
       north: 1, south: 1, east: 1, west: 1
     }
-    this.entID = 'player_pacman';
+    this.entID = entID;
     this.colors = 'ff0';
     this.offsetx = -100;
     this.direction = 'none';
@@ -17,6 +17,7 @@ module.exports = class Pacman extends Entity {
     this._renderData.pixelYOffset = this._renderData.posMult/2;
     this._renderData.pixelXOffset = this._renderData.posMult/2;
   }
+  static entID = entID;
   prepDraw(canvas) {
     let pixeldata = this.getPixelData();
     this._renderData.cObject = canvas.display.ellipse({

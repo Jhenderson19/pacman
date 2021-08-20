@@ -1,10 +1,11 @@
+let entID = 'entity';
 module.exports = class Entity {
   constructor(options = {}) {
     if (options.id === undefined) {
       throw `Entity Spawned without ID!`;
     }
+    this.entID = entID;
     this.id = options.id;
-    this.entID = 'entity';
     this.x = options.x;
     this.y = options.y;
     this.offsetx = 0; //-100 exit cell to left, 100 exit cell to right
@@ -22,6 +23,7 @@ module.exports = class Entity {
       pixelYOffset: 0
     }
   }
+  static entID = entID;
   markForDelete() {
     this.markedForDelete = true;
     if (this._renderData.cObject) {

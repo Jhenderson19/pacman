@@ -1,11 +1,12 @@
 const Pellet = require('./Pellet');
-
+let entID = 'item_powerpellet';
 module.exports = class PowerPellet extends Pellet {
   constructor(options) {
     super(options);
-    this.entID = 'item_powerpellet';
+    this.entID = entID;
     this.duration = 8;
   }
+  static entID = entID;
   collect(eventHandler) {
     super.collect(eventHandler);
     eventHandler.registerEvent('powerPelletCollect', (board) => {

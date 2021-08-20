@@ -1,12 +1,14 @@
 const Entity = require('../entity');
 
+let entID = 'static_wall';
+
 module.exports = class Wall extends Entity {
   constructor(options = {}) {
     super(options);
     this.pathable = false;
-    this.entID = 'static_wall';
+    this.entID = entID;
   }
-
+  static entID = entID;
   prepDraw(canvas) {
     let pixeldata = this.getPixelData();
     this._renderData.cObject = canvas.display.rectangle({
