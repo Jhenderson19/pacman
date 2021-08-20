@@ -1,6 +1,7 @@
 const Board = require('./bin/world/Board');
 const ticker = require('./bin/world/ticker'); window.ticker = ticker; //For Dev Purposes
 const eventHandler = require('./bin/world/GameEventHandler');
+const keyHandler = require('./bin/world/KeyHandler');
 const oCanvas = require('ocanvas');
 
 window.defaultTileSize = 26;
@@ -16,5 +17,6 @@ const canvas = oCanvas.create({
 
 ticker.setCanvas(canvas);
 ticker.setEventHandler(eventHandler);
-window.ticker.register(new Board());
+ticker.setKeyHandler(keyHandler);
+ticker.setBoard(new Board());
 ticker.startTick();

@@ -75,31 +75,31 @@ class Board {
         let g = '';
         switch (this.layoutArr[y][x]) {
           case 'w':
-            this.spawn('Wall', { x, y });
+            this.spawn('static_wall', { x, y });
             break;
           case '.':
-            this.spawn('Pellet', { x, y });
+            this.spawn('item_pellet', { x, y });
             break;
           case 'o':
-            this.spawn('PowerPellet', { x, y });
+            this.spawn('item_powerpellet', { x, y });
             break;
           case '-':
-            this.spawn('GhostGate', { x, y });
+            this.spawn('static_ghostgate', { x, y });
             break;
           case 'P':
-            this.player = this.spawn('Pacman', { x, y });
+            this.player = this.spawn('player_pacman', { x, y });
             break;
           case 'i':
-            this.ghosts.push(this.spawn('Inky', { x, y }));
+            this.ghosts.push(this.spawn('ghost_inky', { x, y }));
             break;
           case 'p':
-            this.ghosts.push(this.spawn('Pinky', { x, y }));
+            this.ghosts.push(this.spawn('ghost_pinky', { x, y }));
             break;
           case 'b':
-            this.ghosts.push(this.spawn('Blinky', { x, y }));
+            this.ghosts.push(this.spawn('ghost_blinky', { x, y }));
             break;
           case 'c':
-            this.ghosts.push(this.spawn('Clyde', { x, y }));
+            this.ghosts.push(this.spawn('ghost_clyde', { x, y }));
             break;
         }
       }
@@ -204,12 +204,14 @@ class Board {
       delete this.stateTimers[stateStr.toLowerCase()];
     }
   }
-  spawn(className, location) {
-    let obj = spawn(entReg.getEntity(className), location)
+  spawn(entityID, location) {
+    let obj = spawn(entReg.getEntity(entityID), location)
     this.getCell(location.x, location.y).insert(obj);
     return obj;
   }
   nav_generate() {
+    console.log('spinning fans to maximum!');
+    console.log('prepare to chug');
     for (let i = 0; i < this.height; i++) {
       for (let j = 0; j < this.width; j++) {
         if (this.getCell(i, j).pathable()) {

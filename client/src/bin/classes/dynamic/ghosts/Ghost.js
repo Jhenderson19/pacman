@@ -52,7 +52,6 @@ module.exports = class Ghost extends Entity {
     return (nextCellNotPathable || optionToTurn) && closeToMiddle;
   }
   pickTurnDirection(data) {
-    console.log('Picking random direction!');
     while(true) {
       let possibleDirections = ['north', 'east', 'south', 'west'];
       let nDir = Math.floor(Math.random()*4);
@@ -110,9 +109,9 @@ module.exports = class Ghost extends Entity {
     }
     this.moveCells(data.cell, data.board);
   }
-  // collide(data, eventHandler){
-  //   for (let ent in data.cell.contents) {
-  //     data.cell.contents[ent].collect ? data.cell.contents[ent].collect(eventHandler) : null;
-  //   }
-  // }
+  collide(data, eventHandler){
+    for (let ent in data.cell.contents) {
+      data.cell.contents[ent].collect ? data.cell.contents[ent].collect(eventHandler) : null;
+    }
+  }
 }

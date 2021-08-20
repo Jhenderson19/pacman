@@ -6,8 +6,14 @@ class Ticker {
     this.intervalDigit = 0;
     this.ticking = false;
   }
+  setBoard(board) {
+    this.board = board;
+  }
   setEventHandler(eventHandler) {
     this.eventHandler = eventHandler;
+  }
+  setKeyHandler(keyHandler) {
+    this.keyHandler = keyHandler;
   }
   setCanvas(canvas) {
     this.canvas = canvas;
@@ -25,11 +31,7 @@ class Ticker {
     })
   }
   register(obj) {
-    if (obj.constructor.name.includes('Board')) {
-      this.board = obj;
-    } else {
-      this.entList.push(obj);
-    }
+    this.entList.push(obj);
   }
   list() {
     return this.entList;
@@ -73,7 +75,8 @@ class Ticker {
         player: this.board.player,
         ghosts: this.board.ghosts,
         board: {width: this.board.width, height: this.board.height, getCell: this.board.getCell.bind(this.board)},
-        checkState: this.board.checkState.bind(this.board)
+        checkState: this.board.checkState.bind(this.board),
+        pressedKeys: this.keyHandler.pressedKeys
       }
 
       entity.tick(data, this.eventHandler);

@@ -4,7 +4,7 @@ module.exports = class Entity {
       throw `Entity Spawned without ID!`;
     }
     this.id = options.id;
-
+    this.entID = 'entity';
     this.x = options.x;
     this.y = options.y;
     this.offsetx = 0; //-100 exit cell to left, 100 exit cell to right

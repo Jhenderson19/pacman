@@ -4,7 +4,10 @@ module.exports = class Pacman extends Entity {
   constructor(options) {
     super(options);
     this.pathable = true;
-    this.speed = options.speed || 1;
+    this.speed = options.speed || 20;
+    this.speedMults = {
+      north: 1, south: 1, east: 1, west: 1
+    }
     this.entID = 'player_pacman';
     this.colors = 'ff0';
     this.offsetx = -100;
@@ -27,6 +30,8 @@ module.exports = class Pacman extends Entity {
   }
   draw(canvas) {
 
+  }
+  tick(data) {
   }
   collide(data, eventHandler){
     for (let ent in data.cell.contents) {
