@@ -110,8 +110,6 @@ module.exports = class Ghost extends Entity {
     this.moveCells(data.cell, data.board);
   }
   collide(data, eventHandler){
-    for (let ent in data.cell.contents) {
-      data.cell.contents[ent].collect ? data.cell.contents[ent].collect(eventHandler) : null;
-    }
+
   }
 }
