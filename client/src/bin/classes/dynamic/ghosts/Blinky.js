@@ -7,6 +7,7 @@ module.exports = class Blinky extends Ghost{
     this.direction = 'west';
     this.entID = entID;
     this.trapped = options.trapped !== undefined ? options.trapped : false;
+    this.defaultPathfinding = 'aggressive';
   }
   static entID = entID;
 }

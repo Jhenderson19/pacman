@@ -7,6 +7,7 @@ module.exports = class Pinky extends Ghost{
     this.direction = 'north';
     this.entID = entID;
     this.trapped = options.trapped !== undefined ? options.trapped : true;
+    this.defaultPathfinding = 'aimAhead';
   }
   static entID = entID;
 }

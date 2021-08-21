@@ -7,6 +7,7 @@ module.exports = class Clyde extends Ghost{
     this.direction = 'south';
     this.entID = entID;
     this.trapped = options.trapped !== undefined ? options.trapped : true;
+    this.defaultPathfinding = 'shy';
   }
   static entID = entID;
 }

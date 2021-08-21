@@ -18,16 +18,13 @@ class Ticker {
   setCanvas(canvas) {
     this.canvas = canvas;
     this.canvas.timeline.fps = this.fps;
-    let lastTime = 0;
     canvas.setLoop(() => {
       if(this.board.checkState('Paused')) { return }
       this.handleTicks();
       this.handleCollides();
       this.handleDeletes();
       this.handleDraws();
-      this.eventHandler.handleAll(this.board, this.fps);
-      document.getElementById('fps').innerHTML = (''+ (100 * (1000 / (Date.now() - lastTime)) / this.fps)).slice(0, 4) + '%';
-      lastTime = Date.now();
+      this.eventHandler.handleAll(this.board);
     })
   }
   register(obj) {

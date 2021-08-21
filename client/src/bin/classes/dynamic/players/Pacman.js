@@ -4,7 +4,7 @@ module.exports = class Pacman extends Entity {
   constructor(options) {
     super(options);
     this.pathable = true;
-    this.speed = options.speed || 25;
+    this.speed = options.speed || 30;
     this.speedMults = {
       north: 1, south: 1, east: 1, west: 1
     }
@@ -23,7 +23,7 @@ module.exports = class Pacman extends Entity {
     this._renderData.cObject = canvas.display.ellipse({
       x: pixeldata.x,
       y: pixeldata.y,
-      radius: pixeldata.height/2,
+      radius: pixeldata.height * .95,
       fill: '#'+this.colors,
     });
     canvas.addChild(this._renderData.cObject);
@@ -35,16 +35,22 @@ module.exports = class Pacman extends Entity {
     this._renderData.cObject.y = pixeldata.y;
   }
   tick(data) {
-    if (data.pressedKeys.KeyW) {
+    let pathables = {
+      north: data.cell.neighbors.north.pathable(),
+      south: data.cell.neighbors.south.pathable(),
+      east: data.cell.neighbors.east.pathable(),
+      west: data.cell.neighbors.west.pathable()
+    }
+    if (data.pressedKeys.KeyW && Math.abs(this.offsetx) < this.speed && pathables.north) {
       this.direction = 'north';
     }
-    if (data.pressedKeys.KeyD) {
+    if (data.pressedKeys.KeyD && Math.abs(this.offsety) < this.speed && pathables.east) {
       this.direction = 'east';
     }
-    if (data.pressedKeys.KeyS) {
+    if (data.pressedKeys.KeyS && Math.abs(this.offsetx) < this.speed && pathables.south) {
       this.direction = 'south';
     }
-    if (data.pressedKeys.KeyA) {
+    if (data.pressedKeys.KeyA && Math.abs(this.offsety) < this.speed && pathables.west) {
       this.direction = 'west';
     }
 
@@ -52,29 +58,29 @@ module.exports = class Pacman extends Entity {
       case 'north':
         this.offsetx = 0;
         this.offsety -= this.speed * this.speedMults[this.direction];
-        if(!data.cell.neighbors.north.pathable() && this.offsety < this.speed * -1) {
-           this.offsety = this.speed * -1;
+        if(!pathables.north && this.offsety < 0) {
+          this.offsety = 0;
         }
         break;
       case 'east':
         this.offsety = 0;
         this.offsetx += this.speed * this.speedMults[this.direction];
-        if(!data.cell.neighbors.east.pathable() && this.offsetx > this.speed) {
-          this.offsetx = this.speed;
+        if(!pathables.east && this.offsetx > 0) {
+          this.offsetx = 0;
         }
         break;
       case 'south':
         this.offsetx = 0;
         this.offsety += this.speed * this.speedMults[this.direction];
-        if(!data.cell.neighbors.south.pathable() && this.offsety > this.speed ) {
-          this.offsety = this.speed;
+        if(!pathables.south && this.offsety > 0 ) {
+          this.offsety = 0;
         }
         break;
       case 'west':
         this.offsety = 0;
         this.offsetx -= this.speed * this.speedMults[this.direction];
-        if(!data.cell.neighbors.west.pathable() && this.offsetx < this.speed * -1) {
-          this.offsetx = this.speed * -1;
+        if(!pathables.west && this.offsetx < 0) {
+          this.offsetx = 0;
         }
         break;
     }

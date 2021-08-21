@@ -172,17 +172,11 @@ class Board {
   }
   addStateTemporary(stateStr = '', duration = 8){
     this.addState(stateStr.toLowerCase());
-    this.stateTimers[stateStr.toLowerCase()] = duration * 1000;
-  }
-  tickTimers(fps) {
-    for(let state in this.stateTimers) {
-      this.stateTimers[state] -= 1000/fps;
-    }
-    this.removeExpiredStates();
+    this.stateTimers[stateStr.toLowerCase()] = Date.now() + duration * 1000;
   }
   removeExpiredStates() {
     for(let state in this.stateTimers) {
-      if(this.stateTimers[state] < 0) {
+      if(this.stateTimers[state] < Date.now()) {
         console.log('removing state:', state);
         this.removeState(state);
       }
@@ -191,6 +185,12 @@ class Board {
   addState(stateStr = '') {
     if(!this.checkState(stateStr)) {
       this.gameStates.push(stateStr.toLowerCase());
+      if(stateStr.toLowerCase() === 'paused') {
+        let pauseTime = Date.now()
+        for(let state in this.stateTimers) {
+          this.stateTimers[state] -= pauseTime;
+        }
+      }
       return true;
     }
     return false;
@@ -202,6 +202,12 @@ class Board {
     while(this.gameStates.indexOf(stateStr.toLowerCase()) > -1) {
       this.gameStates.splice(this.gameStates.indexOf(stateStr.toLowerCase()),1);
       delete this.stateTimers[stateStr.toLowerCase()];
+      if(stateStr.toLowerCase() === 'paused') {
+        let unpauseTime = Date.now();
+        for(let state in this.stateTimers) {
+          this.stateTimers[state] += unpauseTime;
+        }
+      }
     }
   }
   spawn(entityID, location) {

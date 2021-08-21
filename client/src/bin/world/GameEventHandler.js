@@ -12,11 +12,11 @@ class GameEventHandler {
     event.payload(board);
   }
 
-  handleAll(board, fps) {
+  handleAll(board) {
     while (this.queue.length) {
       this.handleEvent(board);
     }
-    board.tickTimers(fps);
+    board.removeExpiredStates();
   }
 }
 
