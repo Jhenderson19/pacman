@@ -16,10 +16,12 @@ class Ticker {
     this.keyHandler = keyHandler;
   }
   setCanvas(canvas) {
+    if (!this.board) { throw 'Register the board first!' }
     this.canvas = canvas;
     this.canvas.timeline.fps = this.fps;
+    this.initDraws();
     canvas.setLoop(() => {
-      if(this.board.checkState('Paused')) { return }
+      if (this.board.checkState('Paused')) { return }
       this.handleTicks();
       this.handleCollides();
       this.handleDeletes();
@@ -71,7 +73,7 @@ class Ticker {
         cell: entity.x !== undefined && entity.y !== undefined && this.board ? this.board.getCell(entity.x, entity.y) : undefined,
         player: this.board.player,
         ghosts: this.board.ghosts,
-        board: {width: this.board.width, height: this.board.height, getCell: this.board.getCell.bind(this.board)},
+        board: { width: this.board.width, height: this.board.height, getCell: this.board.getCell.bind(this.board) },
         checkState: this.board.checkState.bind(this.board),
         pressedKeys: this.keyHandler.pressedKeys
       }
@@ -95,6 +97,22 @@ class Ticker {
 
       entity.draw(data);
     });
+  }
+  initDraws() {
+    var initGroup = (regex) => {
+      this.entList.forEach((entity) => {
+        if (regex.test(entity.entID) && !entity._renderData.ready && entity.prepDraw) {
+          entity.prepDraw(this.canvas);
+        }
+      })
+    }
+    var order = [
+      /static/,
+      /item/,
+      /player/,
+      /ghost/
+    ]
+    order.forEach(initGroup);
   }
 
 

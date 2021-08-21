@@ -5,5 +5,5 @@ module.exports = class MsPacman extends Pacman {
     super(options);
     this.entID = entID;
   }
-  static entID = 'player_ms-pacman';
+  static entID = entID;
 }

@@ -15,8 +15,8 @@ const canvas = oCanvas.create({
   background: "#000"
 });
 
-ticker.setCanvas(canvas);
+ticker.setBoard(new Board());
 ticker.setEventHandler(eventHandler);
 ticker.setKeyHandler(keyHandler);
-ticker.setBoard(new Board());
+ticker.setCanvas(canvas);
 ticker.startTick();
