@@ -4,7 +4,7 @@ const entReg = require('./entity-registry');
 //World
 const spawn = require('./spawner');
 const Cell = require('./Cell');
-const NavMesh = require('./NavMesh');
+const NavMesh = require('../AI/NavMesh');
 
 class Board {
   constructor() {
@@ -35,15 +35,15 @@ class Board {
       w.wwww.ww.wwwwwwww.ww.wwww.w
       w......ww....ww....ww......w
       wwwwww.wwwww_ww_wwwww.wwwwww
-      _____w.wwwww_ww_wwwww.w_____
-      _____w.ww_____b____ww.w_____
-      _____w.ww_www--www_ww.w_____
+      sssssw.wwwww_ww_wwwww.wsssss
+      sssssw.ww_____b____ww.wsssss
+      sssssw.ww_www--www_ww.wsssss
       wwwwww.ww_w______w_ww.wwwwww
       ______.___w_i_p_cw___.______
       wwwwww.ww_w______w_ww.wwwwww
-      _____w.ww_wwwwwwww_ww.w_____
-      _____w.ww__________ww.w_____
-      _____w.ww_wwwwwwww_ww.w_____
+      sssssw.ww_wwwwwwww_ww.wsssss
+      sssssw.ww__________ww.wsssss
+      sssssw.ww_wwwwwwww_ww.wsssss
       wwwwww.ww_wwwwwwww_ww.wwwwww
       w............ww............w
       w.wwww.wwwww.ww.wwwww.wwww.w
@@ -56,7 +56,7 @@ class Board {
       w.wwwwwwwwww.ww.wwwwwwwwww.w
       w..........................w
       wwwwwwwwwwwwwwwwwwwwwwwwwwww`.replace(/ /g, '');
-    if (!/^[w\.o_Pipbc\n-]+$/.test(this.layout)) {
+    if (!/^[ws\.o_Pipbc\n-]+$/.test(this.layout)) {
       throw 'INVALID CHARACTER IN BOARD LAYOUT STRING'
     }
     this.layoutArr = this.layout.split('\n');
@@ -76,6 +76,9 @@ class Board {
         switch (this.layoutArr[y][x]) {
           case 'w':
             this.spawn('static_wall', { x, y });
+            break;
+          case 's':
+            this.spawn('static_wall', { x, y, hidden: true});
             break;
           case '.':
             this.spawn('item_pellet', { x, y });
@@ -104,6 +107,7 @@ class Board {
         }
       }
     }
+    this.nav_generate();
   }
 
   consoleDraw() {
@@ -211,17 +215,22 @@ class Board {
     }
   }
   spawn(entityID, location) {
-    let obj = spawn(entReg.getEntity(entityID), location)
+    let obj;
+    if(typeof entityID === 'string') {
+      obj = spawn(entReg.getEntity(entityID), location)
+    } else {
+      obj = spawn(entityID, location);
+    }
+
     this.getCell(location.x, location.y).insert(obj);
     return obj;
   }
   nav_generate() {
-    console.log('spinning fans to maximum!');
-    console.log('prepare to chug');
     for (let i = 0; i < this.height; i++) {
       for (let j = 0; j < this.width; j++) {
         if (this.getCell(i, j).pathable()) {
-          this.navMesh = new NavMesh(i, j, this);
+          this.navMesh = new NavMesh(this);
+          this.navMesh.connectAll();
           return;
         }
       }

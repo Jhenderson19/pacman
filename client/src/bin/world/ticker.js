@@ -75,7 +75,8 @@ class Ticker {
         ghosts: this.board.ghosts,
         board: { width: this.board.width, height: this.board.height, getCell: this.board.getCell.bind(this.board) },
         checkState: this.board.checkState.bind(this.board),
-        pressedKeys: this.keyHandler.pressedKeys
+        pressedKeys: this.keyHandler.pressedKeys,
+        getPath: this.board.navMesh.getPath.bind(this.board.navMesh)
       }
 
       entity.tick(data, this.eventHandler);

@@ -19,7 +19,7 @@ module.exports = class GhostGate extends Entity {
     canvas.addChild(this._renderData.cObject);
     this._renderData.ready = true;
   }
-  draw(canvas, frame, cell, player, ghosts = []) {
+  draw(data) {
 
   }
 }

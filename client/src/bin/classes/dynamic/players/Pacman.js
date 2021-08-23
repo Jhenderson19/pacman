@@ -11,6 +11,7 @@ module.exports = class Pacman extends Entity {
     this.colors = 'ff0';
     this.offsetx = -100;
     this.direction = 'none';
+    this.lastTurnLoc = {x: this.x, y: this.y};
     this.defaultPathfinding = 'playerControlled';
 
     //Render Help
