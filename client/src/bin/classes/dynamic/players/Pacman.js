@@ -1,17 +1,17 @@
 const Entity = require('../../entity');
+const Pathfinding = require('../../../AI/Pathfinding');
 let entID = 'player_pacman';
 module.exports = class Pacman extends Entity {
   constructor(options) {
     super(options);
     this.pathable = true;
     this.speed = options.speed || 30;
-    this.speedMults = {
-      north: 1, south: 1, east: 1, west: 1
-    }
+    this.speedMult = 1;
     this.entID = entID;
     this.colors = 'ff0';
     this.offsetx = -100;
     this.direction = 'none';
+    this.defaultPathfinding = 'playerControlled';
 
     //Render Help
     this._renderData.pixelYOffset = this._renderData.posMult/2;
@@ -35,55 +35,8 @@ module.exports = class Pacman extends Entity {
     this._renderData.cObject.y = pixeldata.y;
   }
   tick(data) {
-    let pathables = {
-      north: data.cell.neighbors.north.pathable(),
-      south: data.cell.neighbors.south.pathable(),
-      east: data.cell.neighbors.east.pathable(),
-      west: data.cell.neighbors.west.pathable()
-    }
-    if (data.pressedKeys.KeyW && Math.abs(this.offsetx) < this.speed && pathables.north) {
-      this.direction = 'north';
-    }
-    if (data.pressedKeys.KeyD && Math.abs(this.offsety) < this.speed && pathables.east) {
-      this.direction = 'east';
-    }
-    if (data.pressedKeys.KeyS && Math.abs(this.offsetx) < this.speed && pathables.south) {
-      this.direction = 'south';
-    }
-    if (data.pressedKeys.KeyA && Math.abs(this.offsety) < this.speed && pathables.west) {
-      this.direction = 'west';
-    }
+    Pathfinding[this.defaultPathfinding](this, data);
 
-    switch(this.direction) {
-      case 'north':
-        this.offsetx = 0;
-        this.offsety -= this.speed * this.speedMults[this.direction];
-        if(!pathables.north && this.offsety < 0) {
-          this.offsety = 0;
-        }
-        break;
-      case 'east':
-        this.offsety = 0;
-        this.offsetx += this.speed * this.speedMults[this.direction];
-        if(!pathables.east && this.offsetx > 0) {
-          this.offsetx = 0;
-        }
-        break;
-      case 'south':
-        this.offsetx = 0;
-        this.offsety += this.speed * this.speedMults[this.direction];
-        if(!pathables.south && this.offsety > 0 ) {
-          this.offsety = 0;
-        }
-        break;
-      case 'west':
-        this.offsety = 0;
-        this.offsetx -= this.speed * this.speedMults[this.direction];
-        if(!pathables.west && this.offsetx < 0) {
-          this.offsetx = 0;
-        }
-        break;
-    }
     this.moveCells(data.cell, data.board);
   }
   collide(data, eventHandler){

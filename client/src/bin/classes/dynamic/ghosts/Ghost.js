@@ -53,32 +53,7 @@ module.exports = class Ghost extends Entity {
     } else {
       Pathfinding.ghostHouse(this, data);
     }
-    switch(this.direction) {
-      case 'east':
-        this.offsetx += this.speed * this.speedMult;
-        if(!this.trapped) {
-          this.offsety = 0;
-        }
-        break;
-      case 'west':
-        this.offsetx -= this.speed * this.speedMult;
-        if(!this.trapped) {
-          this.offsety = 0;
-        }
-        break;
-      case 'north':
-        this.offsety -= this.speed * this.speedMult;
-        if(!this.trapped) {
-          this.offsetx = 0;
-        }
-        break;
-      case 'south':
-        this.offsety += this.speed * this.speedMult;
-        if(!this.trapped) {
-          this.offsetx = 0;
-        }
-        break;
-    }
+
     this.moveCells(data.cell, data.board);
   }
 
