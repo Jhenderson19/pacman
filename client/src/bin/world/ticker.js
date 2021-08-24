@@ -5,6 +5,7 @@ class Ticker {
     this.fps = fps;
     this.intervalDigit = 0;
     this.ticking = false;
+    this.idIndex = 0;
   }
   setBoard(board) {
     this.board = board;
@@ -14,6 +15,9 @@ class Ticker {
   }
   setKeyHandler(keyHandler) {
     this.keyHandler = keyHandler;
+  }
+  setStateHandler(stateHandler) {
+    this.stateHandler = stateHandler;
   }
   setCanvas(canvas) {
     if (!this.board) { throw 'Register the board first!' }
@@ -29,8 +33,14 @@ class Ticker {
       this.eventHandler.handleAll(this.board);
     })
   }
-  register(obj) {
-    this.entList.push(obj);
+  spawn(spawnTarget, options) {
+    var x = new spawnTarget({...options, id: this.idIndex});
+    if (!x.entID) {
+      throw `Object with ID ${id} spawned without entID! ${spawnTarget.entID}`;
+    }
+    this.idIndex++;
+    this.entList.push(x);
+    return x;
   }
   list() {
     return this.entList;
@@ -111,7 +121,8 @@ class Ticker {
       /static/,
       /item/,
       /player/,
-      /ghost/
+      /ghost/,
+      /ai/
     ]
     order.forEach(initGroup);
   }
@@ -133,4 +144,4 @@ class Ticker {
   }
 }
 
-module.exports = new Ticker();
+module.exports = Ticker;

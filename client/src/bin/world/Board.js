@@ -2,12 +2,11 @@
 const entReg = require('./entity-registry');
 
 //World
-const spawn = require('./spawner');
 const Cell = require('./Cell');
 const NavMesh = require('../AI/NavMesh');
 
 class Board {
-  constructor() {
+  constructor(layout) {
     this.board = [[]];
     this.player;
     this.ghosts = [];
@@ -25,7 +24,8 @@ class Board {
     //p = Pinky
     //c = clyde
     //- = ghostGate
-    this.layout = `wwwwwwwwwwwwwwwwwwwwwwwwwwww
+    if(!layout) {
+      layout = `wwwwwwwwwwwwwwwwwwwwwwwwwwww
       w............ww............w
       w.wwww.wwwww.ww.wwwww.wwww.w
       wowwww.wwwww.ww.wwwww.wwwwow
@@ -55,11 +55,13 @@ class Board {
       w.wwwwwwwwww.ww.wwwwwwwwww.w
       w.wwwwwwwwww.ww.wwwwwwwwww.w
       w..........................w
-      wwwwwwwwwwwwwwwwwwwwwwwwwwww`.replace(/ /g, '');
-    if (!/^[ws\.o_Pipbc\n-]+$/.test(this.layout)) {
+      wwwwwwwwwwwwwwwwwwwwwwwwwwww`
+    }
+    layout = layout.replace(/ /g, '');
+    if (!/^[ws\.o_Pipbc\n-]+$/.test(layout)) {
       throw 'INVALID CHARACTER IN BOARD LAYOUT STRING'
     }
-    this.layoutArr = this.layout.split('\n');
+    this.layoutArr = layout.split('\n');
 
     this.board = this.layoutArr.map((row) => {
       return row.split('').map((col) => {
@@ -68,7 +70,13 @@ class Board {
     });
     this.height = this.board.length;
     this.width = this.board[0].length;
+  }
 
+  setTicker(ticker) {
+    this.ticker = ticker;
+  }
+
+  populate() {
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
         this.getCell(x, y)._setNeighbors(this.getCellNeighbors(x, y));
@@ -87,6 +95,7 @@ class Board {
             this.spawn('item_powerpellet', { x, y });
             break;
           case '-':
+            this.ghostExit = {x, y: y - 1};
             this.spawn('static_ghostgate', { x, y });
             break;
           case 'P':
@@ -108,6 +117,10 @@ class Board {
       }
     }
     this.nav_generate();
+    this.ghosts[0].setScatterHome({x: this.width-1, y:0});
+    this.ghosts[1].setScatterHome({x: this.width-1, y:this.height - 1});
+    this.ghosts[2].setScatterHome({x: 0, y: 0});
+    this.ghosts[3].setScatterHome({x: 0, y:this.height - 1});
   }
 
   consoleDraw() {
@@ -217,9 +230,9 @@ class Board {
   spawn(entityID, location) {
     let obj;
     if(typeof entityID === 'string') {
-      obj = spawn(entReg.getEntity(entityID), location)
+      obj = this.ticker.spawn(entReg.getEntity(entityID), location)
     } else {
-      obj = spawn(entityID, location);
+      obj = this.ticker.spawn(entityID, location);
     }
 
     this.getCell(location.x, location.y).insert(obj);
@@ -234,6 +247,14 @@ class Board {
           return;
         }
       }
+    }
+  }
+  async dev_freeGhosts() {
+    for(let g in this.ghosts) {
+      this.ghosts[g].instantFree(this.ghostExit.x, this.ghostExit.y);
+      await new Promise((resolve) => {
+        setTimeout(resolve, 750);
+      })
     }
   }
 }

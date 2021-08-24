@@ -14,6 +14,9 @@
           ghost.speed = 0;
         });
       }
+      window.freeall = () => {
+        window.ticker.board.dev_freeGhosts();
+      }
     </script>
     <link rel='stylesheet' href='/css/index.css'/>
   </head>
@@ -25,5 +28,6 @@
     <div>Game Speed: <span id='fps'></span></div>
     <button onclick="pausefunc()">pause</button>
     <button onclick="freeze()">freeze ghosts</button>
+    <button onclick="freeall()">free all ghosts!</button>
   </body>
 </html>

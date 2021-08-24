@@ -14,4 +14,4 @@ class KeyHandler {
   }
 }
 
-module.exports = new KeyHandler();
+module.exports = KeyHandler;

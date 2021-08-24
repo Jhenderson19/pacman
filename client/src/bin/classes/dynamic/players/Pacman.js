@@ -41,14 +41,18 @@ module.exports = class Pacman extends Entity {
     this.moveCells(data.cell, data.board);
   }
   collide(data, eventHandler){
-    for (let ent in data.cell.contents) {
+    data.cell.contents.forEach(entity => {
       if(data.checkState('scaredGhosts')) {
-        //Kill the ghost
+        if(entity.entID.indexOf('ghost') !== -1) {
+          entity.frightenedImmune ? null : entity.killGhost(eventHandler);
+        }
       }
-      data.cell.contents[ent].collect ? data.cell.contents[ent].collect(eventHandler) : null;
-    }
+      entity.collect ? entity.collect(eventHandler) : null;
+    });
   }
   kill(eventHandler) {
+    this.x = 1;
+    this.y = 1;
     console.log('killed',this);
   }
 }

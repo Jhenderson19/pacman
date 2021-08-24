@@ -20,4 +20,4 @@ class GameEventHandler {
   }
 }
 
-module.exports = new GameEventHandler();
+module.exports = GameEventHandler;

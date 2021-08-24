@@ -1,20 +1,18 @@
 class EntityRegistry {
-  constructor () {
-    this.entityDefinitions = [
-      require('../classes/entity'),
-      require('../classes/static/Wall'),
-      require('../classes/static/GhostGate'),
-      require('../classes/dynamic/players/Pacman'),
-      require('../classes/dynamic/players/MsPacman'),
-      require('../classes/dynamic/items/Pellet'),
-      require('../classes/dynamic/items/PowerPellet'),
-      require('../classes/dynamic/ghosts/Inky'),
-      require('../classes/dynamic/ghosts/Pinky'),
-      require('../classes/dynamic/ghosts/Blinky'),
-      require('../classes/dynamic/ghosts/Clyde')
-    ];
-  }
-  getEntity(entityID) {
+  static entityDefinitions =[
+    require('../classes/entity'),
+    require('../classes/static/Wall'),
+    require('../classes/static/GhostGate'),
+    require('../classes/dynamic/players/Pacman'),
+    require('../classes/dynamic/players/MsPacman'),
+    require('../classes/dynamic/items/Pellet'),
+    require('../classes/dynamic/items/PowerPellet'),
+    require('../classes/dynamic/ghosts/Inky'),
+    require('../classes/dynamic/ghosts/Pinky'),
+    require('../classes/dynamic/ghosts/Blinky'),
+    require('../classes/dynamic/ghosts/Clyde')
+  ];
+  static getEntity(entityID) {
     for (let entry in this.entityDefinitions) {
       if (this.entityDefinitions[entry].entID === entityID) {
         return this.entityDefinitions[entry];
@@ -24,4 +22,4 @@ class EntityRegistry {
   }
 }
 
-module.exports = new EntityRegistry();
+module.exports = EntityRegistry;

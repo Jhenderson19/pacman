@@ -11,6 +11,11 @@ module.exports = class PowerPellet extends Pellet {
     super.collect(eventHandler);
     eventHandler.registerEvent('powerPelletCollect', (board) => {
         console.log('POWERPELLET COLLECTED! GET EM BOYS');
+        board.ghosts.forEach(ghost => {
+          if (ghost.alive) {
+            ghost.frightenedImmune = false;
+          }
+        });
         board.addStateTemporary('ScaredGhosts', this.duration);
     });
   }

@@ -105,97 +105,87 @@ module.exports = class Pathfinding {
   }
 
   static aggressive(pathingObject, data) {
-    let pathables = getPathables(data.cell);
-    //Pathfinding.random(pathingObject, data);
-
-    //Algo
-    let navNode = data.cell.contains('ai_navnode');
-    if(nearMid(pathingObject)) {
-      if (navNode && movedSinceLastTurn(pathingObject)) {
-        let target = {
-          x: data.player.x,
-          y: data.player.y
-        }
-        let distance = data.getPath(navNode, pathingObject.direction, target);
-        pathingObject.direction = distance.direction;
-        pathingObject.lastTurnLoc = {x: pathingObject.x, y: pathingObject.y };
-      } else if (!pathables[pathingObject.direction]) {
-        pathingObject.direction = getOpposite(pathingObject.direction);
-      }
+    let getTarget = (pathingObject, data) => {
+      return data.player;
     }
-    //End Algo
 
-
-    caluclateOffsets(pathingObject, pathables);
+    Pathfinding.moveToTarget(pathingObject, data, getTarget);
   }
   static aimAhead(pathingObject, data) {
-    let pathables = getPathables(data.cell);
-
-    //Algo
-    let navNode = data.cell.contains('ai_navnode');
-    if(nearMid(pathingObject)) {
-      if (navNode && movedSinceLastTurn(pathingObject)) {
-        let target = {
-          x: data.player.x,
-          y: data.player.y
-        }
-        switch(data.player.direction) {
-          case 'north':
-            target.y -= 4;
-            break;
-          case 'south':
-            target.y += 4;
-            break;
-          case 'east':
-            target.x += 4;
-            break;
-          case 'west':
-            target.x -= 4;
-            break;
-        }
-        let path = data.getPath(navNode, pathingObject.direction, target);
-        pathingObject.direction = path.direction;
-        pathingObject.lastTurnLoc = {x: pathingObject.x, y: pathingObject.y };
-      } else if (!pathables[pathingObject.direction]) {
-        pathingObject.direction = getOpposite(pathingObject.direction);
+    let getTarget = (pathingObject, data) => {
+      let target = {
+        x: data.player.x,
+        y: data.player.y
       }
+      switch(data.player.direction) {
+        case 'north':
+          target.y -= 4;
+          break;
+        case 'south':
+          target.y += 4;
+          break;
+        case 'east':
+          target.x += 4;
+          break;
+        case 'west':
+          target.x -= 4;
+          break;
+      }
+      return target;
     }
-    //End Algo
 
-    caluclateOffsets(pathingObject, pathables);
+    Pathfinding.moveToTarget(pathingObject, data, getTarget);
   }
   static ambush(pathingObject, data) {
-    //let pathables = getPathables(data.cell);
-    //caluclateOffsets(pathingObject, pathables);
-    //redirect ambush to random until I can implement it
-    Pathfinding.random(pathingObject, data);
-  }
-  static shy(pathingObject, data) {
-    let pathables = getPathables(data.cell);
-
-    //Algo
-    let navNode = data.cell.contains('ai_navnode');
-    if(nearMid(pathingObject)) {
-      if (navNode && movedSinceLastTurn(pathingObject)) {
-        let target = {
-          x: data.player.x,
-          y: data.player.y
-        }
-        if (distance(pathingObject, data.player) <= 8) {
-          console.log(pathingObject.entID + ": I'm scared!");
-          target.x = 1;
-          target.y = data.board.height - 2;
-        }
-        let path = data.getPath(navNode, pathingObject.direction, target);
-        pathingObject.direction = path.direction;
-        pathingObject.lastTurnLoc = {x: pathingObject.x, y: pathingObject.y };
-      } else if (!pathables[pathingObject.direction]) {
-        pathingObject.direction = getOpposite(pathingObject.direction);
+    let getTarget = (pathingObject, data) => {
+      let tGhost;
+      let modPlayer = {
+        x: data.player.x,
+        y: data.player.y
+      }
+      switch(data.player.direction) {
+        case 'north':
+          modPlayer.y -= 2;
+          break;
+        case 'south':
+          modPlayer.y += 2;
+          break;
+        case 'east':
+          modPlayer.x += 2;
+          break;
+        case 'west':
+          modPlayer.x -= 2;
+          break;
+      }
+      data.ghosts.forEach((ghost) =>{
+        ghost.defaultPathfinding === 'aggressive' ? tGhost = ghost : null;
+      });
+      if(tGhost === undefined) {
+        throw 'No aggressive Ghost found for ambush pathfinding!';
+      }
+      return {
+        x: 2 * (modPlayer.x - tGhost.x) + tGhost.x,
+        y: 2 * (modPlayer.y - tGhost.y) + tGhost.y
       }
     }
-    //End Algo
 
-    caluclateOffsets(pathingObject, pathables);
+    Pathfinding.moveToTarget(pathingObject, data, getTarget);
+  }
+  static shy(pathingObject, data) {
+    let getTarget = (pathingObject, data) => {
+      if(distance(pathingObject, data.player) >= 8) {
+        return data.player;
+      } else {
+        return pathingObject.scatterHome;
+      }
+    }
+
+    Pathfinding.moveToTarget(pathingObject, data, getTarget);
+  }
+  static scatter(pathingObject, data) {
+    Pathfinding.moveToTarget(pathingObject, data, (pathingObject, data) => {
+      return pathingObject.scatterHome;
+    });
   }
   static scared(pathingObject, data) {
     let pathables = getPathables(data.cell);
@@ -216,6 +206,23 @@ module.exports = class Pathfinding {
     }
     if (data.pressedKeys.KeyA && Math.abs(pathingObject.offsety) < pathingObject.speed && pathables.west) {
       pathingObject.direction = 'west';
+    }
+
+    caluclateOffsets(pathingObject, pathables);
+  }
+
+  static moveToTarget(pathingObject, data, getTargetAlgo) {
+    let pathables = getPathables(data.cell);
+
+    let navNode = data.cell.contains('ai_navnode');
+    if(nearMid(pathingObject)) {
+      if (navNode && movedSinceLastTurn(pathingObject)) {
+        let distance = data.getPath(navNode, pathingObject.direction, getTargetAlgo(pathingObject, data));
+        pathingObject.direction = distance.direction;
+        pathingObject.lastTurnLoc = {x: pathingObject.x, y: pathingObject.y };
+      } else if (!pathables[pathingObject.direction]) {
+        pathingObject.direction = getOpposite(pathingObject.direction);
+      }
     }
 
     caluclateOffsets(pathingObject, pathables);

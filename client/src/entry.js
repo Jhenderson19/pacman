@@ -1,13 +1,21 @@
 const Board = require('./bin/world/Board');
-const ticker = require('./bin/world/ticker'); window.ticker = ticker; //For Dev Purposes
-const eventHandler = require('./bin/world/GameEventHandler');
-const keyHandler = require('./bin/world/KeyHandler');
+const Ticker = require('./bin/world/ticker');
+const GameEventHandler = require('./bin/world/GameEventHandler');
+const KeyHandler = require('./bin/world/KeyHandler');
+const StateHandler = require('./bin/world/StateHandler');
 const oCanvas = require('ocanvas');
 
-window.defaultTileSize = 26;
-document.getElementById('pacmanGame').setAttribute('width', window.defaultTileSize * 28);
-document.getElementById('pacmanGame').setAttribute('height', window.defaultTileSize * 31);
+let board = new Board();
+let ticker = new Ticker();
+board.setTicker(ticker);
+ticker.setBoard(board);
+ticker.setEventHandler(new GameEventHandler());
+ticker.setKeyHandler(new KeyHandler());
+ticker.setStateHandler(new StateHandler());
 
+window.defaultTileSize = 16;
+document.getElementById('pacmanGame').setAttribute('width', window.defaultTileSize * board.width);
+document.getElementById('pacmanGame').setAttribute('height', window.defaultTileSize * board.height);
 
 //prepare canvas to render to
 const canvas = oCanvas.create({
@@ -15,8 +23,7 @@ const canvas = oCanvas.create({
   background: "#000"
 });
 
-ticker.setBoard(new Board());
-ticker.setEventHandler(eventHandler);
-ticker.setKeyHandler(keyHandler);
+board.populate();
 ticker.setCanvas(canvas);
 ticker.startTick();
+window.ticker = ticker;
