@@ -1,4 +1,4 @@
-class Ticker {
+module.exports = class Ticker {
   constructor(fps = 60) {
     this.entList = [];
     this.tickInterval = Math.floor(1000 / fps);
@@ -7,18 +7,23 @@ class Ticker {
     this.ticking = false;
     this.idIndex = 0;
   }
+
   setBoard(board) {
     this.board = board;
   }
+
   setEventHandler(eventHandler) {
     this.eventHandler = eventHandler;
   }
+
   setKeyHandler(keyHandler) {
     this.keyHandler = keyHandler;
   }
+
   setStateHandler(stateHandler) {
     this.stateHandler = stateHandler;
   }
+
   setCanvas(canvas) {
     if (!this.board) { throw 'Register the board first!' }
     this.canvas = canvas;
@@ -33,6 +38,7 @@ class Ticker {
       this.eventHandler.handleAll(this.board);
     })
   }
+
   spawn(spawnTarget, options) {
     var x = new spawnTarget({...options, id: this.idIndex});
     if (!x.entID) {
@@ -42,9 +48,11 @@ class Ticker {
     this.entList.push(x);
     return x;
   }
+
   list() {
     return this.entList;
   }
+
   handleDeletes() {
     this.entList.forEach((entity, index) => {
       var data = {
@@ -59,6 +67,7 @@ class Ticker {
       }
     })
   }
+
   handleCollides() {
     this.entList.forEach((entity) => {
       if (!entity.collide) { return }
@@ -74,6 +83,7 @@ class Ticker {
       entity.collide(data, this.eventHandler);
     });
   }
+
   handleTicks() {
     this.entList.forEach((entity) => {
       if (!entity.tick) { return }
@@ -92,6 +102,7 @@ class Ticker {
       entity.tick(data, this.eventHandler);
     });
   }
+
   handleDraws() {
     this.entList.forEach((entity) => {
       if (!entity.draw || !this.canvas) { return }
@@ -109,7 +120,9 @@ class Ticker {
       entity.draw(data);
     });
   }
+
   initDraws() {
+
     var initGroup = (regex) => {
       this.entList.forEach((entity) => {
         if (regex.test(entity.entID) && !entity._renderData.ready && entity.prepDraw) {
@@ -117,6 +130,7 @@ class Ticker {
         }
       })
     }
+
     var order = [
       /static/,
       /item/,
@@ -124,9 +138,9 @@ class Ticker {
       /ghost/,
       /ai/
     ]
+
     order.forEach(initGroup);
   }
-
 
   startTick() {
     if (!this.ticking) {
@@ -135,6 +149,7 @@ class Ticker {
       this.ticking = true;
     }
   }
+
   stopTick() {
     if (this.ticking) {
       console.log('Stopping Ticking!');
@@ -142,6 +157,5 @@ class Ticker {
       this.ticking = false;
     }
   }
-}
 
-module.exports = Ticker;
+}

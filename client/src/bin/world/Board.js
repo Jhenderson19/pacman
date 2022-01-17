@@ -1,11 +1,12 @@
 //Entities
-const entReg = require('./entity-registry');
+const EntityRegistry = require('./EntityRegistry');
 
 //World
 const Cell = require('./Cell');
 const NavMesh = require('../AI/NavMesh');
 
-class Board {
+module.exports = class Board {
+
   constructor(layout) {
     this.board = [[]];
     this.player;
@@ -143,6 +144,7 @@ class Board {
     console.log('ghosts:');
     console.log(this.ghosts);
   }
+
   entListVerbose() {
     for (let i = 0; i < this.height; i++) {
       for (let j = 0; j < this.width; j++) {
@@ -150,9 +152,11 @@ class Board {
       }
     }
   }
+
   getCell(x, y) {
     return this.board[y][x];
   }
+
   getCellNeighbors(x, y) {
     var results = {};
 
@@ -178,6 +182,7 @@ class Board {
 
     return results;
   }
+
   toggleState(stateStr = '') {
     if(this.checkState(stateStr)) {
       this.removeState(stateStr);
@@ -187,10 +192,12 @@ class Board {
       return true;
     }
   }
+
   addStateTemporary(stateStr = '', duration = 8){
     this.addState(stateStr.toLowerCase());
     this.stateTimers[stateStr.toLowerCase()] = Date.now() + duration * 1000;
   }
+
   removeExpiredStates() {
     for(let state in this.stateTimers) {
       if(this.stateTimers[state] < Date.now()) {
@@ -199,6 +206,7 @@ class Board {
       }
     }
   }
+
   addState(stateStr = '') {
     if(!this.checkState(stateStr)) {
       this.gameStates.push(stateStr.toLowerCase());
@@ -212,9 +220,11 @@ class Board {
     }
     return false;
   }
+
   checkState(stateStr = '') {
     return this.gameStates.indexOf(stateStr.toLowerCase()) > -1;
   }
+
   removeState(stateStr) {
     while(this.gameStates.indexOf(stateStr.toLowerCase()) > -1) {
       this.gameStates.splice(this.gameStates.indexOf(stateStr.toLowerCase()),1);
@@ -227,10 +237,11 @@ class Board {
       }
     }
   }
+
   spawn(entityID, location) {
     let obj;
     if(typeof entityID === 'string') {
-      obj = this.ticker.spawn(entReg.getEntity(entityID), location)
+      obj = this.ticker.spawn(EntityRegistry.getEntity(entityID), location)
     } else {
       obj = this.ticker.spawn(entityID, location);
     }
@@ -238,6 +249,7 @@ class Board {
     this.getCell(location.x, location.y).insert(obj);
     return obj;
   }
+
   nav_generate() {
     for (let i = 0; i < this.height; i++) {
       for (let j = 0; j < this.width; j++) {
@@ -249,6 +261,7 @@ class Board {
       }
     }
   }
+
   async dev_freeGhosts() {
     for(let g in this.ghosts) {
       this.ghosts[g].instantFree(this.ghostExit.x, this.ghostExit.y);
@@ -257,6 +270,5 @@ class Board {
       })
     }
   }
-}
 
-module.exports = Board;
+}

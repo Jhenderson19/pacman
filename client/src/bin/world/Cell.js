@@ -1,11 +1,14 @@
 class Cell {
+
   constructor(objects = []) {
     this.contents = objects.slice(0);
     this.neighbors = [];
   }
+
   insert(object) {
     this.contents.push(object);
   }
+
   remove(object) {
     /*
       Removes an object by reference from a cell.
@@ -18,6 +21,7 @@ class Cell {
     }
     return false;
   }
+
   contains(entID) {
     var results = [];
     for (let i in this.contents) {
@@ -39,6 +43,7 @@ class Cell {
     }
     return false;
   }
+
   listTypes() {
     var results = [];
     for (let i in this.contents) {
@@ -46,6 +51,7 @@ class Cell {
     }
     return results;
   }
+
   pathable() {
     if(this.contents.length === 0) { return true };
     for (let entity in this.contents) {
@@ -55,6 +61,7 @@ class Cell {
     }
     return true;
   }
+
   _setNeighbors(neighbors) {
     if(this.neighbors.length === 0) {
       this.neighbors = neighbors;
@@ -62,6 +69,7 @@ class Cell {
       throw 'Cell._setNeighbors to be called once only!';
     }
   }
+
 }
 
 module.exports = Cell;

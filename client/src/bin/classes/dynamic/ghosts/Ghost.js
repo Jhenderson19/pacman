@@ -1,16 +1,21 @@
 const Pathfinding = require('../../../AI/Pathfinding');
 const Entity = require('../../entity');
 let entID = 'ghost_default';
+
 module.exports = class Ghost extends Entity {
+
+  static entID = entID;
+
   constructor(options) {
     super(options);
+    this.entID = entID;
+
     this.pathable = true;
     this.speed = options.speed || 30;
     this.speedMult = 1;
     this.defaultSpeedMult = 1;
     this.colors = '1E1E1E';
     this.direction = 'east';
-    this.entID = entID;
     this.offsetx = -100;
     this.lastTurnLoc = {x: this.x, y: this.y};
     this.scatterHome = {x: this.x, y: this.y};
@@ -22,7 +27,7 @@ module.exports = class Ghost extends Entity {
     this._renderData.pixelYOffset = this._renderData.posMult/2;
     this._renderData.pixelXOffset = this._renderData.posMult/2;
   }
-  static entID = entID;
+
   prepDraw(canvas) {
     let pixeldata = this.getPixelData();
     this._renderData.cObject = canvas.display.ellipse({
@@ -34,7 +39,8 @@ module.exports = class Ghost extends Entity {
     canvas.addChild(this._renderData.cObject);
     this._renderData.ready = true;
   }
-  draw(data = {}) {
+
+  draw(data) {
     let pixeldata = this.getPixelData();
     this._renderData.cObject.x = pixeldata.x;
     this._renderData.cObject.y = pixeldata.y;
@@ -44,7 +50,8 @@ module.exports = class Ghost extends Entity {
       this._renderData.cObject.fill = '#' + this.colors;
     }
   }
-  instantFree(x = 1, y = 1) {
+
+  _instantFree(x = 1, y = 1) {
     this.x = x;
     this.y = y;
     this.trapped = false;
@@ -52,6 +59,7 @@ module.exports = class Ghost extends Entity {
     this.offsety = 0;
     this.direction = Math.random() > .5 ? 'east' : 'west';
   }
+
   tick(data) {
     if(data.checkState('scaredghosts') && !this.frightenedImmune) {
       this.speedMult = .45;
@@ -67,17 +75,20 @@ module.exports = class Ghost extends Entity {
 
     this.moveCells(data.cell, data.board);
   }
+
   setScatterHome(loc) {
     this.scatterHome.x = loc.x;
     this.scatterHome.y = loc.y;
   }
+
   killGhost(eventHandler) {
     if (!this.frightenedImmune) {
-      console.log(this.entID + ' has been killed!');
+      window.pacmanConfig.logGhostDeaths ? console.log(this.entID + ' has been killed!') : null;
       this.frightenedImmune = true;
-      this.instantFree();
+      this._instantFree();
     }
   }
+
   collide(data, eventHandler){
     data.cell.contents.forEach(entity => {
       if(!data.checkState('scaredGhosts') || this.frightenedImmune) {

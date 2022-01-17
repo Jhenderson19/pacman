@@ -1,4 +1,4 @@
-class GameEventHandler {
+module.exports = class GameEventHandler {
   constructor() {
     this.queue = [];
   }
@@ -19,5 +19,3 @@ class GameEventHandler {
     board.removeExpiredStates();
   }
 }
-
-module.exports = GameEventHandler;

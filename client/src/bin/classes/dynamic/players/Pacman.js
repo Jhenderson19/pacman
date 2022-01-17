@@ -1,7 +1,11 @@
 const Entity = require('../../entity');
 const Pathfinding = require('../../../AI/Pathfinding');
 let entID = 'player_pacman';
+
 module.exports = class Pacman extends Entity {
+
+  static entID = entID;
+
   constructor(options) {
     super(options);
     this.pathable = true;
@@ -18,7 +22,7 @@ module.exports = class Pacman extends Entity {
     this._renderData.pixelYOffset = this._renderData.posMult/2;
     this._renderData.pixelXOffset = this._renderData.posMult/2;
   }
-  static entID = entID;
+
   prepDraw(canvas) {
     let pixeldata = this.getPixelData();
     this._renderData.cObject = canvas.display.ellipse({
@@ -30,29 +34,32 @@ module.exports = class Pacman extends Entity {
     canvas.addChild(this._renderData.cObject);
     this._renderData.ready = true;
   }
-  draw(canvas) {
+
+  draw(data) {
     let pixeldata = this.getPixelData();
     this._renderData.cObject.x = pixeldata.x;
     this._renderData.cObject.y = pixeldata.y;
   }
+
   tick(data) {
     Pathfinding[this.defaultPathfinding](this, data);
-
     this.moveCells(data.cell, data.board);
   }
+
   collide(data, eventHandler){
     data.cell.contents.forEach(entity => {
       if(data.checkState('scaredGhosts')) {
         if(entity.entID.indexOf('ghost') !== -1) {
-          entity.frightenedImmune ? null : entity.killGhost(eventHandler);
+          !entity.frightenedImmune ? entity.killGhost(eventHandler) : null;
         }
       }
       entity.collect ? entity.collect(eventHandler) : null;
     });
   }
+
   kill(eventHandler) {
     this.x = 1;
     this.y = 1;
-    console.log('killed',this);
+    window.pacmanConfig.logPlayerDeaths ? console.log('killed',this) : null;
   }
 }

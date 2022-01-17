@@ -1,5 +1,7 @@
 let entID = 'entity';
 module.exports = class Entity {
+  static entID = entID;
+
   constructor(options = {}) {
     if (options.id === undefined) {
       throw `Entity Spawned without ID!`;
@@ -16,20 +18,21 @@ module.exports = class Entity {
 
     this._renderData = {
       ready: false,
-      posMult: window.defaultTileSize,
-      pixelHeight: window.defaultTileSize,
-      pixelWidth: window.defaultTileSize,
+      posMult: window.pacmanConfig.defaultTileSize,
+      pixelHeight: window.pacmanConfig.defaultTileSize,
+      pixelWidth: window.pacmanConfig.defaultTileSize,
       pixelXOffset: 0,
       pixelYOffset: 0
     }
   }
-  static entID = entID;
+
   markForDelete() {
     this.markedForDelete = true;
     if (this._renderData.cObject) {
       this._renderData.cObject.remove();
     }
   }
+
   getPixelData() {
     return {
       x: (this.x * this._renderData.posMult + this._renderData.pixelXOffset) + (this._renderData.posMult * (this.offsetx / 201)),
@@ -38,6 +41,7 @@ module.exports = class Entity {
       height: this._renderData.pixelHeight
     }
   }
+
   moveCells(cell, board) {
     if(!cell || !cell.neighbors) {
       throw 'cell was not passed to moveCell';

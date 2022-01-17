@@ -1,4 +1,4 @@
-class EntityRegistry {
+module.exports = class EntityRegistry {
   static entityDefinitions =[
     require('../classes/entity'),
     require('../classes/static/Wall'),
@@ -21,5 +21,3 @@ class EntityRegistry {
     throw `Unable to find ${entityID} in entity registry!`;
   }
 }
-
-module.exports = EntityRegistry;

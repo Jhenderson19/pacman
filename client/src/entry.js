@@ -1,3 +1,4 @@
+require ('./config');
 const Board = require('./bin/world/Board');
 const Ticker = require('./bin/world/ticker');
 const GameEventHandler = require('./bin/world/GameEventHandler');
@@ -13,9 +14,8 @@ ticker.setEventHandler(new GameEventHandler());
 ticker.setKeyHandler(new KeyHandler());
 ticker.setStateHandler(new StateHandler());
 
-window.defaultTileSize = 16;
-document.getElementById('pacmanGame').setAttribute('width', window.defaultTileSize * board.width);
-document.getElementById('pacmanGame').setAttribute('height', window.defaultTileSize * board.height);
+document.getElementById('pacmanGame').setAttribute('width', window.pacmanConfig.defaultTileSize * board.width);
+document.getElementById('pacmanGame').setAttribute('height', window.pacmanConfig.defaultTileSize * board.height);
 
 //prepare canvas to render to
 const canvas = oCanvas.create({

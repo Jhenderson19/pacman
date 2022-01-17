@@ -3,13 +3,17 @@ const Entity = require('../entity');
 let entID = 'static_wall';
 
 module.exports = class Wall extends Entity {
+
+  static entID = entID;
+
   constructor(options = {}) {
     super(options);
-    this.pathable = false;
     this.entID = entID;
+
+    this.pathable = false;
     this.hidden = options.hidden ? true : false;
   }
-  static entID = entID;
+
   prepDraw(canvas) {
     if (!this.hidden) {
       let pixeldata = this.getPixelData();
@@ -24,5 +28,6 @@ module.exports = class Wall extends Entity {
   }
 
   draw(data) {
+    return null;
   }
 }

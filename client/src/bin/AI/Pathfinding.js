@@ -1,3 +1,4 @@
+//Helper Functions
 var getPathables = (cell) => {
   return {
     north: cell.neighbors.north.pathable(),
@@ -6,21 +7,21 @@ var getPathables = (cell) => {
     west: cell.neighbors.west.pathable()
   }
 }
+
 var movedSinceLastTurn = (pathingObject) => {
   return pathingObject.x !== pathingObject.lastTurnLoc.x || pathingObject.y !== pathingObject.lastTurnLoc.y;
 }
+
 var getOpposite = (direction) => {
-  switch (direction) {
-    case 'north':
-      return 'south'
-    case 'east':
-      return 'west';
-    case 'south':
-      return 'north';
-    case 'west':
-      return 'east';
+  var opposites = {
+    north: 'south',
+    east: 'west',
+    south: 'north',
+    west: 'east'
   }
+  return opposites[direction];
 }
+
 var caluclateOffsets = (object, pathables, gridlocked = true) => {
   switch(object.direction) {
     case 'north':
@@ -61,9 +62,11 @@ var caluclateOffsets = (object, pathables, gridlocked = true) => {
       break;
   }
 }
+
 var nearMid = (pathingObject) => {
   return Math.max(Math.abs(pathingObject.offsetx), Math.abs(pathingObject.offsety)) < pathingObject.speed;
 }
+
 var distance = (a, b) => {
     return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
 }
@@ -89,6 +92,7 @@ module.exports = class Pathfinding {
 
     caluclateOffsets(pathingObject, pathables);
   }
+
   static ghostHouse(pathingObject, data) {
     let pathables = {
       north: data.cell.neighbors.north.pathable(),
@@ -97,9 +101,11 @@ module.exports = class Pathfinding {
       east: false
     }
 
+    //Algo
     if (Math.abs(pathingObject.offsety) < pathingObject.speed && !pathables[pathingObject.direction]) {
       pathingObject.direction = pathingObject.direction === 'north' ? 'south' : 'north';
     }
+    //End Algo
 
     caluclateOffsets(pathingObject, pathables, false);
   }
@@ -111,6 +117,7 @@ module.exports = class Pathfinding {
 
     Pathfinding.moveToTarget(pathingObject, data, getTarget);
   }
+
   static aimAhead(pathingObject, data) {
     let getTarget = (pathingObject, data) => {
       let target = {
@@ -136,13 +143,16 @@ module.exports = class Pathfinding {
 
     Pathfinding.moveToTarget(pathingObject, data, getTarget);
   }
+
   static ambush(pathingObject, data) {
+
     let getTarget = (pathingObject, data) => {
       let tGhost;
       let modPlayer = {
         x: data.player.x,
         y: data.player.y
       }
+
       switch(data.player.direction) {
         case 'north':
           modPlayer.y -= 2;
@@ -157,12 +167,15 @@ module.exports = class Pathfinding {
           modPlayer.x -= 2;
           break;
       }
+
       data.ghosts.forEach((ghost) =>{
         ghost.defaultPathfinding === 'aggressive' ? tGhost = ghost : null;
       });
+
       if(tGhost === undefined) {
         throw 'No aggressive Ghost found for ambush pathfinding!';
       }
+
       return {
         x: 2 * (modPlayer.x - tGhost.x) + tGhost.x,
         y: 2 * (modPlayer.y - tGhost.y) + tGhost.y
@@ -171,6 +184,7 @@ module.exports = class Pathfinding {
 
     Pathfinding.moveToTarget(pathingObject, data, getTarget);
   }
+
   static shy(pathingObject, data) {
     let getTarget = (pathingObject, data) => {
       if(distance(pathingObject, data.player) >= 8) {
@@ -182,16 +196,19 @@ module.exports = class Pathfinding {
 
     Pathfinding.moveToTarget(pathingObject, data, getTarget);
   }
+
   static scatter(pathingObject, data) {
     Pathfinding.moveToTarget(pathingObject, data, (pathingObject, data) => {
       return pathingObject.scatterHome;
     });
   }
+
   static scared(pathingObject, data) {
     let pathables = getPathables(data.cell);
 
     caluclateOffsets(pathingObject, pathables);
   }
+
   static playerControlled(pathingObject, data) {
     let pathables = getPathables(data.cell);
 
@@ -214,6 +231,7 @@ module.exports = class Pathfinding {
   static moveToTarget(pathingObject, data, getTargetAlgo) {
     let pathables = getPathables(data.cell);
 
+    //Algo
     let navNode = data.cell.contains('ai_navnode');
     if(nearMid(pathingObject)) {
       if (navNode && movedSinceLastTurn(pathingObject)) {
@@ -224,6 +242,7 @@ module.exports = class Pathfinding {
         pathingObject.direction = getOpposite(pathingObject.direction);
       }
     }
+    //End Algo
 
     caluclateOffsets(pathingObject, pathables);
   }
