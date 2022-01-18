@@ -1,21 +1,38 @@
+const GameEvent = require("./events/GameEvent");
+const StateHandler = require("./StateHandler");
+
 module.exports = class GameEventHandler {
   constructor() {
+    /** @type {GameEvent[]} */
     this.queue = [];
   }
 
-  registerEvent(name, payload) {
-    this.queue.push({name, payload});
+  /**
+   *
+   * @param {GameEvent} event
+   */
+  registerEvent(event) {
+    this.queue.push(event);
   }
 
-  handleEvent(board) {
+
+  /**
+   *
+   * @param {StateHandler} stateHander
+   */
+  handleEvent(stateHandler) {
     var event = this.queue.shift();
-    event.payload(board);
+    event.onFireEvent(stateHandler);
   }
 
-  handleAll(board) {
+  /**
+   *
+   * @param {StateHandler} stateHander
+   */
+  handleAll(stateHander) {
     while (this.queue.length) {
-      this.handleEvent(board);
+      this.handleEvent(stateHander);
     }
-    board.removeExpiredStates();
+    stateHander.removeExpiredStates();
   }
 }

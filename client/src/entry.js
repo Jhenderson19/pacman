@@ -1,6 +1,6 @@
 require ('./config');
 const Board = require('./bin/world/Board');
-const Ticker = require('./bin/world/ticker');
+const Ticker = require('./bin/world/Ticker');
 const GameEventHandler = require('./bin/world/GameEventHandler');
 const KeyHandler = require('./bin/world/KeyHandler');
 const StateHandler = require('./bin/world/StateHandler');

@@ -1,14 +1,11 @@
 const Entity = require('../entity');
 
-let entID = 'static_wall';
-
 module.exports = class Wall extends Entity {
 
-  static entID = entID;
+  static entID = 'static_wall';
 
   constructor(options = {}) {
     super(options);
-    this.entID = entID;
 
     this.pathable = false;
     this.hidden = options.hidden ? true : false;

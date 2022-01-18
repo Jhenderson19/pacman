@@ -1,12 +1,15 @@
-let entID = 'entity';
+const Cell = require('../world/Cell');
+const Board = require('../world/Board');
+
 module.exports = class Entity {
-  static entID = entID;
+  static entID = 'entity';
 
   constructor(options = {}) {
     if (options.id === undefined) {
       throw `Entity Spawned without ID!`;
     }
-    this.entID = entID;
+    /** @type {string} */
+    this.entID = this.constructor.entID;
     this.id = options.id;
     this.x = options.x;
     this.y = options.y;
@@ -26,6 +29,36 @@ module.exports = class Entity {
     }
   }
 
+  /**
+   * updates an entity
+   * @param {*} data
+   */
+  tick(data) {
+
+  }
+
+  /**
+   * Prepares an entity to be drawn
+   * @param {*} data
+   * @returns
+   */
+  prepDraw(data) {
+    return;
+  }
+
+  /**
+   * Updates an object on the canvas
+   * @param {*} data
+   * @returns
+   */
+  draw(data){
+    return;
+  }
+
+  /**
+   * Marks an entity to be deleted from the board
+   * @returns {void}
+   */
   markForDelete() {
     this.markedForDelete = true;
     if (this._renderData.cObject) {
@@ -33,6 +66,10 @@ module.exports = class Entity {
     }
   }
 
+  /**
+   * Provides x and y coordinates with width and height for use by Ocanvas
+   * @returns {{ x: Number, y: Number, width: Number, height: Number}} PixelData
+   */
   getPixelData() {
     return {
       x: (this.x * this._renderData.posMult + this._renderData.pixelXOffset) + (this._renderData.posMult * (this.offsetx / 201)),
@@ -42,6 +79,11 @@ module.exports = class Entity {
     }
   }
 
+  /**
+   *
+   * @param {Cell} cell
+   * @param {Board} board
+   */
   moveCells(cell, board) {
     if(!cell || !cell.neighbors) {
       throw 'cell was not passed to moveCell';

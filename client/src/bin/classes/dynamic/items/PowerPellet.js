@@ -1,14 +1,11 @@
+const PowerPelletCollectEvent = require('../../../world/events/PowerPelletCollectEvent');
 const Pellet = require('./Pellet');
-let entID = 'item_powerpellet';
-
 module.exports = class PowerPellet extends Pellet {
 
-  static entID = entID;
+  static entID = 'item_powerpellet';
 
   constructor(options) {
     super(options);
-    this.entID = entID;
-
     this.duration = 8;
   }
 
@@ -16,15 +13,7 @@ module.exports = class PowerPellet extends Pellet {
 
     super.collect(eventHandler);
 
-    eventHandler.registerEvent('PowerPelletCollect', (board) => {
-        console.log('POWERPELLET COLLECTED! GET EM BOYS');
-        board.ghosts.forEach(ghost => {
-          if (ghost.alive) {
-            ghost.frightenedImmune = false;
-          }
-        });
-        board.addStateTemporary('ScaredGhosts', this.duration);
-    });
+    eventHandler.registerEvent(new PowerPelletCollectEvent());
 
   }
 

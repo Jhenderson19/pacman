@@ -1,10 +1,28 @@
+const Pacman = require('../classes/dynamic/players/Pacman');
+const Entity = require('../classes/entity');
+const Cell = require('./Cell');
+const GameEventHandler = require('./GameEventHandler');
+const KeyHandler = require('./KeyHandler');
+const StateHandler = require('./StateHandler');
+
 module.exports = class Ticker {
   constructor(fps = 60) {
+    /** @type {Entity[]} list of entities tracked by this ticker*/
     this.entList = [];
+
+    /** @type {number} delay in ms between frames*/
     this.tickInterval = Math.floor(1000 / fps);
+
+    /** @type {number} - Goal FPS of this ticker*/
     this.fps = fps;
+
+    /** @type {Number} - Not sure what this does, for now 😅*/
     this.intervalDigit = 0;
+
+    /** @type {Boolean} - Whether this ticker is currently ticking */
     this.ticking = false;
+
+    /** @type {Number} - the id of the next entity that will be spawned */
     this.idIndex = 0;
   }
 
@@ -12,33 +30,55 @@ module.exports = class Ticker {
     this.board = board;
   }
 
+  /**
+   *
+   * @param {GameEventHandler} eventHandler
+   */
   setEventHandler(eventHandler) {
     this.eventHandler = eventHandler;
   }
 
+  /**
+   *
+   * @param {KeyHandler} keyHandler
+   */
   setKeyHandler(keyHandler) {
     this.keyHandler = keyHandler;
   }
 
+  /**
+   *
+   * @param {StateHandler} stateHandler
+   */
   setStateHandler(stateHandler) {
     this.stateHandler = stateHandler;
   }
 
+  /**
+   *
+   * @param {OCanvas} canvas
+   */
   setCanvas(canvas) {
     if (!this.board) { throw 'Register the board first!' }
     this.canvas = canvas;
     this.canvas.timeline.fps = this.fps;
     this.initDraws();
     canvas.setLoop(() => {
-      if (this.board.checkState('Paused')) { return }
+      if (this.stateHandler.checkState('Paused')) { return }
       this.handleTicks();
       this.handleCollides();
       this.handleDeletes();
       this.handleDraws();
-      this.eventHandler.handleAll(this.board);
+      this.eventHandler.handleAll(this.stateHandler);
     })
   }
 
+  /**
+   *
+   * @param {typeof Entity} spawnTarget
+   * @param {*} options
+   * @returns {Entity}
+   */
   spawn(spawnTarget, options) {
     var x = new spawnTarget({...options, id: this.idIndex});
     if (!x.entID) {
@@ -77,7 +117,7 @@ module.exports = class Ticker {
         cell: entity.x !== undefined && entity.y !== undefined && this.board ? this.board.getCell(entity.x, entity.y) : undefined,
         player: this.board.player,
         ghosts: this.board.ghosts,
-        checkState: this.board.checkState.bind(this.board)
+        checkState: this.stateHandler.checkState
       }
 
       entity.collide(data, this.eventHandler);
@@ -94,9 +134,9 @@ module.exports = class Ticker {
         player: this.board.player,
         ghosts: this.board.ghosts,
         board: { width: this.board.width, height: this.board.height, getCell: this.board.getCell.bind(this.board) },
-        checkState: this.board.checkState.bind(this.board),
         pressedKeys: this.keyHandler.pressedKeys,
-        getPath: this.board.navMesh.getPath.bind(this.board.navMesh)
+        getPath: this.board.navMesh.getPath.bind(this.board.navMesh),
+        checkState: this.stateHandler.checkState,
       }
 
       entity.tick(data, this.eventHandler);
@@ -105,27 +145,33 @@ module.exports = class Ticker {
 
   handleDraws() {
     this.entList.forEach((entity) => {
-      if (!entity.draw || !this.canvas) { return }
-      (!entity._renderData.ready && entity.prepDraw) ? entity.prepDraw(this.canvas) : undefined; //Prepare the object to be drawn
+      if (!this.canvas) { return }
+
+      !entity._renderData.ready ? entity.prepDraw(this.canvas) : undefined; //Prepare the object to be drawn if it is not ready
 
       var data = {
         canvas: this.canvas,
+        /** @type {number} */
         frame: this.canvas.timeline.currentFrame,
-        cell: entity.x !== undefined && entity.y !== undefined && this.board ? this.board.getCell(entity.x, entity.y) : undefined,
+        /** @type {?Cell} */
+        cell: entity.x !== undefined && entity.y !== undefined && this.board ? this.board.getCell(entity.x, entity.y) : null,
         player: this.board.player,
         ghosts: this.board.ghosts,
-        checkState: this.board.checkState.bind(this.board)
+        checkState: this.stateHandler.checkState,
       }
 
       entity.draw(data);
     });
   }
 
+  /**
+   * runs prepdraw function on all entities that have it, in a specific order
+   */
   initDraws() {
 
     var initGroup = (regex) => {
       this.entList.forEach((entity) => {
-        if (regex.test(entity.entID) && !entity._renderData.ready && entity.prepDraw) {
+        if (regex.test(entity.entID) && !entity._renderData.ready) {
           entity.prepDraw(this.canvas);
         }
       })

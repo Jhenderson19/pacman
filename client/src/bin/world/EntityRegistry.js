@@ -1,5 +1,7 @@
+const Entity = require('../classes/entity');
+
 module.exports = class EntityRegistry {
-  static entityDefinitions =[
+  static entityDefinitions = [
     require('../classes/entity'),
     require('../classes/static/Wall'),
     require('../classes/static/GhostGate'),
@@ -12,6 +14,13 @@ module.exports = class EntityRegistry {
     require('../classes/dynamic/ghosts/Blinky'),
     require('../classes/dynamic/ghosts/Clyde')
   ];
+
+  /**
+   *
+   * @param {string} entityID
+   * @throws Will throw an error if an entity cannot be found
+   * @returns {typeof Entity}
+   */
   static getEntity(entityID) {
     for (let entry in this.entityDefinitions) {
       if (this.entityDefinitions[entry].entID === entityID) {

@@ -11,10 +11,7 @@ module.exports = class Board {
     this.board = [[]];
     this.player;
     this.ghosts = [];
-    this.gameStates = [
-      'playing'
-    ]
-    this.stateTimers = [];
+
     //w = wall
     //. = pellet
     //o = power pellet
@@ -153,6 +150,12 @@ module.exports = class Board {
     }
   }
 
+  /**
+   *
+   * @param {Number} x
+   * @param {Number} y
+   * @returns {Cell}
+   */
   getCell(x, y) {
     return this.board[y][x];
   }
@@ -183,61 +186,6 @@ module.exports = class Board {
     return results;
   }
 
-  toggleState(stateStr = '') {
-    if(this.checkState(stateStr)) {
-      this.removeState(stateStr);
-      return false;
-    } else {
-      this.addState(stateStr);
-      return true;
-    }
-  }
-
-  addStateTemporary(stateStr = '', duration = 8){
-    this.addState(stateStr.toLowerCase());
-    this.stateTimers[stateStr.toLowerCase()] = Date.now() + duration * 1000;
-  }
-
-  removeExpiredStates() {
-    for(let state in this.stateTimers) {
-      if(this.stateTimers[state] < Date.now()) {
-        console.log('removing state:', state);
-        this.removeState(state);
-      }
-    }
-  }
-
-  addState(stateStr = '') {
-    if(!this.checkState(stateStr)) {
-      this.gameStates.push(stateStr.toLowerCase());
-      if(stateStr.toLowerCase() === 'paused') {
-        let pauseTime = Date.now()
-        for(let state in this.stateTimers) {
-          this.stateTimers[state] -= pauseTime;
-        }
-      }
-      return true;
-    }
-    return false;
-  }
-
-  checkState(stateStr = '') {
-    return this.gameStates.indexOf(stateStr.toLowerCase()) > -1;
-  }
-
-  removeState(stateStr) {
-    while(this.gameStates.indexOf(stateStr.toLowerCase()) > -1) {
-      this.gameStates.splice(this.gameStates.indexOf(stateStr.toLowerCase()),1);
-      delete this.stateTimers[stateStr.toLowerCase()];
-      if(stateStr.toLowerCase() === 'paused') {
-        let unpauseTime = Date.now();
-        for(let state in this.stateTimers) {
-          this.stateTimers[state] += unpauseTime;
-        }
-      }
-    }
-  }
-
   spawn(entityID, location) {
     let obj;
     if(typeof entityID === 'string') {
@@ -264,7 +212,7 @@ module.exports = class Board {
 
   async dev_freeGhosts() {
     for(let g in this.ghosts) {
-      this.ghosts[g].instantFree(this.ghostExit.x, this.ghostExit.y);
+      this.ghosts[g]._instantFree(this.ghostExit.x, this.ghostExit.y);
       await new Promise((resolve) => {
         setTimeout(resolve, 750);
       })

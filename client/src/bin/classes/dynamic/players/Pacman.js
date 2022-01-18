@@ -1,17 +1,17 @@
 const Entity = require('../../entity');
 const Pathfinding = require('../../../AI/Pathfinding');
-let entID = 'player_pacman';
+const GameEventHandler = require('../../../world/GameEventHandler');
+const Ghost = require('../ghosts/Ghost');
 
 module.exports = class Pacman extends Entity {
 
-  static entID = entID;
+  static entID = 'player_pacman';
 
   constructor(options) {
     super(options);
     this.pathable = true;
     this.speed = options.speed || 30;
     this.speedMult = 1;
-    this.entID = entID;
     this.colors = 'ff0';
     this.offsetx = -100;
     this.direction = 'none';
@@ -48,15 +48,21 @@ module.exports = class Pacman extends Entity {
 
   collide(data, eventHandler){
     data.cell.contents.forEach(entity => {
-      if(data.checkState('scaredGhosts')) {
+      if(data.checkState('PowerPelletActive')) {
         if(entity.entID.indexOf('ghost') !== -1) {
-          !entity.frightenedImmune ? entity.killGhost(eventHandler) : null;
+          /** @type {Ghost} */
+          var ghost = entity;
+          !ghost.frightenedImmune ? ghost.killGhost(eventHandler) : null;
         }
       }
       entity.collect ? entity.collect(eventHandler) : null;
     });
   }
 
+  /**
+   *
+   * @param {GameEventHandler} eventHandler
+   */
   kill(eventHandler) {
     this.x = 1;
     this.y = 1;

@@ -1,96 +1,26 @@
-//Helper Functions
-var getPathables = (cell) => {
-  return {
-    north: cell.neighbors.north.pathable(),
-    south: cell.neighbors.south.pathable(),
-    east: cell.neighbors.east.pathable(),
-    west: cell.neighbors.west.pathable()
-  }
-}
-
-var movedSinceLastTurn = (pathingObject) => {
-  return pathingObject.x !== pathingObject.lastTurnLoc.x || pathingObject.y !== pathingObject.lastTurnLoc.y;
-}
-
-var getOpposite = (direction) => {
-  var opposites = {
-    north: 'south',
-    east: 'west',
-    south: 'north',
-    west: 'east'
-  }
-  return opposites[direction];
-}
-
-var caluclateOffsets = (object, pathables, gridlocked = true) => {
-  switch(object.direction) {
-    case 'north':
-      if (gridlocked) {
-        object.offsetx = 0;
-      }
-      object.offsety -= object.speed * object.speedMult;
-      if(!pathables.north && object.offsety < 0) {
-        object.offsety = 0;
-      }
-      break;
-    case 'east':
-      if (gridlocked) {
-        object.offsety = 0;
-      }
-      object.offsetx += object.speed * object.speedMult;
-      if(!pathables.east && object.offsetx > 0) {
-        object.offsetx = 0;
-      }
-      break;
-    case 'south':
-      if (gridlocked) {
-        object.offsetx = 0;
-      }
-      object.offsety += object.speed * object.speedMult;
-      if(!pathables.south && object.offsety > 0 ) {
-        object.offsety = 0;
-      }
-      break;
-    case 'west':
-      if (gridlocked) {
-        object.offsety = 0;
-      }
-      object.offsetx -= object.speed * object.speedMult;
-      if(!pathables.west && object.offsetx < 0) {
-        object.offsetx = 0;
-      }
-      break;
-  }
-}
-
-var nearMid = (pathingObject) => {
-  return Math.max(Math.abs(pathingObject.offsetx), Math.abs(pathingObject.offsety)) < pathingObject.speed;
-}
-
-var distance = (a, b) => {
-    return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
-}
+const Cell = require('../world/Cell');
+const helpers = require('./helpers');
 
 module.exports = class Pathfinding {
   //Pathfinding Modes
   static random(pathingObject, data) {
-    let pathables = getPathables(data.cell);
+    let pathables = helpers.getPathables(data.cell);
 
     //Algo
     let navNode = data.cell.contains('ai_navnode');
-    if(nearMid(pathingObject)) {
-      if (navNode && movedSinceLastTurn(pathingObject)) {
+    if(helpers.getIsNearMiddleOfCell(pathingObject)) {
+      if (navNode && helpers.getHasMovedSinceLastTurn(pathingObject)) {
         let poss = Object.keys(navNode.connectedNodes);
-        poss.splice(poss.indexOf(getOpposite(pathingObject.direction)), 1);
+        poss.splice(poss.indexOf(helpers.opposite[pathingObject.direction]), 1);
         pathingObject.direction = poss[Math.floor(Math.random() * poss.length)];
         pathingObject.lastTurnLoc = {x: pathingObject.x, y: pathingObject.y };
       } else if (!pathables[pathingObject.direction]) {
-        pathingObject.direction = getOpposite(pathingObject.direction);
+        pathingObject.direction = helpers.opposite[pathingObject.direction];
       }
     }
     //End Algo
 
-    caluclateOffsets(pathingObject, pathables);
+    helpers.calculateOffsets(pathingObject, pathables);
   }
 
   static ghostHouse(pathingObject, data) {
@@ -107,7 +37,7 @@ module.exports = class Pathfinding {
     }
     //End Algo
 
-    caluclateOffsets(pathingObject, pathables, false);
+    helpers.calculateOffsets(pathingObject, pathables, false);
   }
 
   static aggressive(pathingObject, data) {
@@ -187,7 +117,7 @@ module.exports = class Pathfinding {
 
   static shy(pathingObject, data) {
     let getTarget = (pathingObject, data) => {
-      if(distance(pathingObject, data.player) >= 8) {
+      if(helpers.distance(pathingObject, data.player) >= 8) {
         return data.player;
       } else {
         return pathingObject.scatterHome;
@@ -204,13 +134,13 @@ module.exports = class Pathfinding {
   }
 
   static scared(pathingObject, data) {
-    let pathables = getPathables(data.cell);
+    let pathables = helpers.getPathables(data.cell);
 
-    caluclateOffsets(pathingObject, pathables);
+    helpers.calculateOffsets(pathingObject, pathables);
   }
 
   static playerControlled(pathingObject, data) {
-    let pathables = getPathables(data.cell);
+    let pathables = helpers.getPathables(data.cell);
 
     if (data.pressedKeys.KeyW && Math.abs(pathingObject.offsetx) < pathingObject.speed && pathables.north) {
       pathingObject.direction = 'north';
@@ -225,25 +155,32 @@ module.exports = class Pathfinding {
       pathingObject.direction = 'west';
     }
 
-    caluclateOffsets(pathingObject, pathables);
+    helpers.calculateOffsets(pathingObject, pathables);
   }
 
+  /**
+   *
+   * @param {Entity} pathingObject
+   * @param {{cell: Cell}} data
+   * @param {function} getTargetAlgo
+   */
   static moveToTarget(pathingObject, data, getTargetAlgo) {
-    let pathables = getPathables(data.cell);
+    let pathables = helpers.getPathables(data.cell);
 
     //Algo
-    let navNode = data.cell.contains('ai_navnode');
-    if(nearMid(pathingObject)) {
-      if (navNode && movedSinceLastTurn(pathingObject)) {
+    let navNode = data.cell.contains('ai_navnode')[0];
+    if(helpers.getIsNearMiddleOfCell(pathingObject)) {
+      if (navNode && helpers.getHasMovedSinceLastTurn(pathingObject)) {
+        console.error('moveToTarget NavNode', navNode);
         let distance = data.getPath(navNode, pathingObject.direction, getTargetAlgo(pathingObject, data));
         pathingObject.direction = distance.direction;
         pathingObject.lastTurnLoc = {x: pathingObject.x, y: pathingObject.y };
       } else if (!pathables[pathingObject.direction]) {
-        pathingObject.direction = getOpposite(pathingObject.direction);
+        pathingObject.direction = helpers.opposite[pathingObject.direction];
       }
     }
     //End Algo
 
-    caluclateOffsets(pathingObject, pathables);
+    helpers.calculateOffsets(pathingObject, pathables);
   }
 }

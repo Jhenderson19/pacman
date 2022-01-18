@@ -1,13 +1,12 @@
 const Entity = require('../../entity');
-let entID = 'item_pellet'
+const PelletCollectEvent = require('../../../world/events/PelletCollectEvent');
 
 module.exports = class Pellet extends Entity {
 
-  static entID = entID;
+  static entID = 'item_pellet';
 
   constructor(options) {
     super(options);
-    this.entID = entID;
 
     this.pathable = true;
     this.colors = 'FFCCCC'
@@ -18,7 +17,7 @@ module.exports = class Pellet extends Entity {
   }
 
   collect(eventHandler) {
-    eventHandler.registerEvent('PelletCollect', (board) => {});
+    eventHandler.registerEvent(new PelletCollectEvent());
     this.markForDelete();
   }
 
@@ -34,7 +33,7 @@ module.exports = class Pellet extends Entity {
     this._renderData.ready = true;
   }
 
-  draw(canvas) {
+  draw(data) {
     return null;
   }
 

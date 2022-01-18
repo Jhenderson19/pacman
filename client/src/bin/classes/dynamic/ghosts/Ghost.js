@@ -1,26 +1,33 @@
 const Pathfinding = require('../../../AI/Pathfinding');
 const Entity = require('../../entity');
-let entID = 'ghost_default';
+const GameEventHandler = require('../../../world/GameEventHandler');
 
 module.exports = class Ghost extends Entity {
 
-  static entID = entID;
+  static entID = 'ghost_default';
 
   constructor(options) {
     super(options);
-    this.entID = entID;
 
+    /** @type {boolean} - True if an object can path through this entity */
     this.pathable = true;
+    /** @type {number} - Speed of the ghost */
     this.speed = options.speed || 30;
+    /** @type {number} - current multiplier of the speed of the ghost */
     this.speedMult = 1;
+    /** @type {number} - speed multiplier to return to, when it is reset */
     this.defaultSpeedMult = 1;
+    /** @type {string} - Color of the ghost! */
     this.colors = '1E1E1E';
+    /** @type {string} - direction the ghost is currently travelling */
     this.direction = 'east';
     this.offsetx = -100;
     this.lastTurnLoc = {x: this.x, y: this.y};
     this.scatterHome = {x: this.x, y: this.y};
     this.defaultPathfinding = 'random';
+    /** @type {boolean} - True if the ghost is currently immune to being frightened */
     this.frightenedImmune = false;
+    /** @type {boolean} - True if the ghost is currently alive */
     this.alive = true;
 
     //Render Help
@@ -44,7 +51,7 @@ module.exports = class Ghost extends Entity {
     let pixeldata = this.getPixelData();
     this._renderData.cObject.x = pixeldata.x;
     this._renderData.cObject.y = pixeldata.y;
-    if( data.checkState('ScaredGhosts')  && !this.frightenedImmune ) {
+    if( data.checkState('PowerPelletActive')  && !this.frightenedImmune ) {
       this._renderData.cObject.fill = data.frame % 30 > 15 ? '#FFF' : '#00F';
     } else {
       this._renderData.cObject.fill = '#' + this.colors;
@@ -81,6 +88,10 @@ module.exports = class Ghost extends Entity {
     this.scatterHome.y = loc.y;
   }
 
+  /**
+   *
+   * @param {GameEventHandler} eventHandler
+   */
   killGhost(eventHandler) {
     if (!this.frightenedImmune) {
       window.pacmanConfig.logGhostDeaths ? console.log(this.entID + ' has been killed!') : null;

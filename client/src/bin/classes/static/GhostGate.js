@@ -1,14 +1,11 @@
 const Entity = require('../entity');
-let entID = 'static_ghostgate';
 
 module.exports = class GhostGate extends Entity {
 
-  static entID = entID;
+  static entID = 'static_ghostgate';
 
   constructor(options = {}) {
     super(options);
-    this.entID = entID;
-
     this.pathable = false;
     this.hidden = false;
     this._renderData.pixelHeight = 4;
