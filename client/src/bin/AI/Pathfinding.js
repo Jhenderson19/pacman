@@ -171,7 +171,6 @@ module.exports = class Pathfinding {
     let navNode = data.cell.contains('ai_navnode')[0];
     if(helpers.getIsNearMiddleOfCell(pathingObject)) {
       if (navNode && helpers.getHasMovedSinceLastTurn(pathingObject)) {
-        console.error('moveToTarget NavNode', navNode);
         let distance = data.getPath(navNode, pathingObject.direction, getTargetAlgo(pathingObject, data));
         pathingObject.direction = distance.direction;
         pathingObject.lastTurnLoc = {x: pathingObject.x, y: pathingObject.y };
